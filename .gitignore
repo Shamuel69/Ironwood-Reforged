@@ -1,0 +1,32 @@
+# Logs
+logs
+ironwood-inventory/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+ironwood-inventory/node_modules/
+ironwood-inventory/dist
+ironwood-inventory/public
+ironwood-inventory/dist-ssr
+*.local
+
+server/venv/
+server/__pycache__/
+*.pyc
+
+.env
+*.env
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
