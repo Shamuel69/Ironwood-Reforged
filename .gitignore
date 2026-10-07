@@ -20,6 +20,8 @@ server/__pycache__/
 .env
 *.env
 
+tables.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

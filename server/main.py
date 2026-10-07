@@ -1,11 +1,92 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 
-from script import dataPlayer
+from server import DataManager
+from server.dataPlayer import dataPlayer
 
-app = Flask(__name__, static_folder="images", static_url_path="/server/images")
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+app = Flask(__name__)
+app.secret_key = "8004628"
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 #get all this set up and return data to front end. might as well make the uploading on the admin page easy too.
+
+@app.route("/api/auth/me", methods=["GET"])
+def me():
+    user_id = session.get("user_id")
+    if not user_id:
+        return {"error": "this guy aint signed in"}, 401
+    
+    username = DataManager().QueryName(user_id)
+
+
+    return {"user_id": user_id, "username": username["username"]}
+
+@app.route("/api/auth/signin", methods=["POST"])
+def signin():
+    data = request.get_json()
+
+    username = data["username"]
+    password = data["password"]
+
+    user = DataManager().Signin(username, password)
+
+    if not user:
+        return {"error": "Invalid username or password"}, 401
+
+    session["user_id"] = user["id"]
+
+    return {"message": "Signed in"}
+
+@app.route("/api/auth/signup", methods=["POST"])
+def signup():
+    data = request.get_json()
+
+    username = data["username"]
+    password = data["password"]
+    
+    user = DataManager().Signup(username, password)
+
+    if not user:
+        return {"error": "something happened on the sign up page"}, 401
+
+    session["user_id"] = user["id"]
+
+    DataManager().initialize_categories(user["id"])
+    
+    return {"message": "Signed up!"}
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return {"message": "Signed out"}, 200
+
+@app.route("/api/auth/username", methods=["GET"])
+def username():
+    user_id = session.get("user_id")
+    username = DataManager().QueryName(user_id)
+
+    return {"username": username["username"]}
+
+@app.route("/api/categories", methods=["GET"])
+def categories_get():
+    user_id = session.get("user_id")
+    
+    if not user_id:
+        return {"error": "Not signed in"}, 401
+
+    # maybe use later
+    # categories = DataManager().db.select("categories", {"user_id": user_id})
+    categories = DataManager().db.select("categories")
+
+    return categories
+
+@app.route("/api/categories", methods=["POST"])
+def categories_send():
+    user_id = session.get("user_id")
+    data = request.get_json()
+    DataManager().db.insert("categories", {"user_id": user_id, "cat_name": data["category_name"]})
+
+    return {"message": "Category creation complete!"}, 201
 
 @app.route("/api/inventory/", methods=["POST"])
 def Add_item():
