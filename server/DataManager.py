@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from dataPlayer import dataPlayer
+import random
+from dataPlayer import dataPlayer,data 
 
 
 class DataManager():
@@ -38,27 +38,106 @@ class DataManager():
 
         return user[0]
 
-    def set_suppliers(self, user_id, suppliers):
-        self.db.insert("suppliers", {"user_id": user_id, "suppliers": suppliers})
+    def set_suppliers(self, data):
+        self.db.insert("suppliers", { "name": data["name"], "email": data["email"], "phone": data["phone"]})
 
+    def get_categories(self, specification:dict = None):
+        if specification is None:
+            categories = self.db.select("categories")
+        else:
+            categories = self.db.select("categories", specification)
+        return categories
+
+    def add_category(self, user_id, category_name, description:str = None):
+        if description:
+            self.db.insert("categories", {"user_id": user_id, "cat_name": category_name, "description": description})
+        else:
+            self.db.insert("categories", {"user_id": user_id, "cat_name": category_name})
+
+    def get_inventory(self, specification: dict = None):
+        if specification:
+            inventory = self.db.select("inventory", specification)
+        else:
+            inventory = self.db.select("inventory")
+            
+        return inventory
+
+    def get_item_info(self, id):
+        query = """
+                    SELECT
+                        products.id,
+                        products.title,
+                        products.image,
+                        products.description,
+                        products.price,
+                        
+                        inventory.quantity,
+                        categories.name as category
+
+                    FROM products
+                    LEFT JOIN categories 
+                        ON categories.id = products.category_id
+
+                    JOIN inventory 
+                        ON products.id = inventory.product_id
+                        
+                    WHERE products.id = ?
+                """
+        self.db.cursor.execute(query, (id,))
+        return [dict(row) for row in self.db.cursor.fetchall()]
+    
 if __name__ == '__main__':
     # db = DataManager().db
     # for i in data:
     #     db.insert("products", i)
     
+    # data = [{"name": "camping", "description": "camping gear and equipment"}, {"name": "cooking", "description": "kettles, cooktops, and utensils for cooking"}, 
+    #         {"name": "lighting", "description": "lanterns, flashlights, and other lighting equipment"}, {"name": "utility", "description": "utility items for survival"},]
+
+        
+
+    nostolgballs = DataManager().db.select("products")
+    categories = DataManager().get_categories()
+    for iter, i in enumerate(data):
+        for category in categories:
+            if category["name"] == i["category"]:
+                # print(f"Category {i['category']} already exists")
+                # print(f"Category ID: {category['id']}")
+                print("funky data", data[iter])
+                # DataManager().db.insert("products", {"id": i["id"], "category_id": category["id"], 
+                #                                     "price": random.randint(16, 80), "title": i["name"], 
+                #                                     "description": i["description"], "image": i["image"]})
+                break
+        DataManager().db.insert("inventory", {"product_id": i["id"], "quantity": random.randint(5, 30)})
+        # print(f"Inserted category with ID: {category['id']} and title: {i['title']}")
+
+    # command = """
+    # SELECT
+    #     products.title,
+    #     products.description
+    #     products.image,
+        
+    # FROM products
+    # """
+
+    # command = """CREATE TABLE IF NOT EXISTS products (
+    #     id INTEGER PRIMARY KEY,
+    #     category_id INTEGER NOT NULL,
+    #     title TEXT NOT NULL,
+    #     image TEXT NOT NULL,
+    #     description TEXT NOT NULL,
+    #     price INTEGER NOT NULL,
+
+    #     FOREIGN KEY (category_id) REFERENCES categories(id)
+    #         )"""
+
+    # print(f"Executing command: {command}\n\n")
     
-
-
-    command = """CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY,
-        title TEXT NOT NULL,
-        image TEXT NOT NULL,
-        description TEXT NOT NULL,
-            )"""
-
-    print(f"Executing command: {command}\n\n")
-
+    # results = DataManager().db.create_table(command)
+    # results = DataManager().db.delete("products")
+    # DataManager().db.delete("products")
     # results = DataManager().db.select("products")
+
     # print(results)
 
     DataManager().db.cursor.close()

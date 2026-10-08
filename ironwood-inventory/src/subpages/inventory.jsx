@@ -113,13 +113,13 @@ export function Inventory() {
   return (
     <>
       {loading ? (
-        <div className="w-full md:w-[75%] mx-auto h-dvh flex justify-center items-center">
+        <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
           <p>Loading...</p>
         </div>
       ):(
-        <div className="w-full  lg:w-[90%] xl:w-[85%] transition-ease-in-out duration-75 mx-auto min-h-screen md:min-h-dvh">
-          <div className="flex flex-row  items-center p-3 md:p-0">
-            <h1>Inventory</h1>
+        <div className="w-full text-(--text-primary) lg:w-[90%] xl:w-[85%] transition-ease-in-out duration-75 mx-auto min-h-screen md:min-h-dvh">
+          <div className="flex flex-row pt-5 items-center p-3 md:p-0">
+            <h1 className="text-4xl font-semibold">Inventory</h1>
             <div className="w-[30%] p-2 relative flex flex-row justify-between item-auto border-1-transparent rounded-[sm]">
               {/* <input type="text" placeholder="Search for products, collections, and more" className='w-[85%]' onChange={handleFilterChange} /> */}
               <img src={search} alt="search icon" className="w-fit h-8 ml-2" onClick={() => setActiveFilter(!activeFilter)} />

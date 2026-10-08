@@ -94,6 +94,8 @@ class dataPlayer():
             columns = ", ".join(keys)
             value_keys = ", ".join(':' + k for k in keys)
 
+            print(f"INSERT OR REPLACE INTO {table}({columns}) VALUES ({value_keys})", array)
+            
             print(f"""INSERT OR REPLACE INTO {table}({columns})
                                     VALUES ({value_keys})
                                 """, array)
@@ -193,10 +195,6 @@ class dataPlayer():
         self.conn.commit()
         print("Deleted")
             
-            
-
-
-
 # cursor.execute("SELECT * FROM products WHERE id = ?", (data["id"],))
 
 # results = cursor.fetchall()

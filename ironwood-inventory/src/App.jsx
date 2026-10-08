@@ -80,8 +80,6 @@ function Home(){
           </div>
         </section>
       </div>
-
-
     </>
   )
 }
@@ -90,6 +88,7 @@ function App() {
   const [user, setUser] = useState(null)
   const [active, setActive] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+
   useEffect(() => {
     const fetchUser = async() => {
         const res = await axios.get("http://localhost:8080/api/auth/me", {withCredentials:true})
@@ -102,9 +101,9 @@ function App() {
 
   return (
     <>
-      <section id="header" className="w-full p-3 text-(--text-primary) bg-(--bg-primary) border-b-1 border-(--border) flex flex-row justify-between items-center">
+      <section id="header" className="w-full p-3 text-(--text-primary) bg-(--bg-primary) border-b-1 border-(--border) flex flex-row shadow-2xl justify-between items-center">
         <div className="w-[85%] mx-auto  flex flex-row justify-between items-center">
-          <Link to="/" className="text-3xl font-bold  font-medium">IronWood</Link>
+          <Link to="/" className="text-3xl  font-medium">IronWood</Link>
           <div className="w-[30%] p-2  flex flex-row justify-between item-auto border-1-transparent rounded-[sm]">
               <input type="text" placeholder="Search for products, collections, and more" className='w-[85%]' />
               <img src={search} alt="search icon" className="w-fit h-4" />
