@@ -38,8 +38,28 @@ class DataManager():
 
         return user[0]
 
-    def set_suppliers(self, data):
-        self.db.insert("suppliers", { "name": data["name"], "email": data["email"], "phone": data["phone"]})
+    def set_suppliers(self, Name:str, Email:str, Phone:str):
+        """
+            Requires the data in the form of a dictionary:
+                Name,
+                Email,
+                Phone,
+        """
+        self.db.insert("suppliers", { "name": Name, "email": Email, "phone": Phone})
+
+    def set_product_supplier(self, product_id:int, supplier_id:int, supplier_price:int):
+            """
+            This requires 3 things:\n
+                product_id,\n
+                supplier_id,\n
+                supplier_price
+            """
+
+            self.db.insert("product_suppliers", {"product_id": product_id, 
+                                                "supplier_id": supplier_id, 
+                                                "supplier_price": supplier_price})
+            
+            print("Uploaded the supplier's product to the database!")
 
     def get_categories(self, specification:dict = None):
         if specification is None:
@@ -48,11 +68,11 @@ class DataManager():
             categories = self.db.select("categories", specification)
         return categories
 
-    def add_category(self, user_id, category_name, description:str = None):
+    def add_category(self, category_name, description:str = None):
         if description:
-            self.db.insert("categories", {"user_id": user_id, "cat_name": category_name, "description": description})
+            self.db.insert("categories", { "cat_name": category_name, "description": description})
         else:
-            self.db.insert("categories", {"user_id": user_id, "cat_name": category_name})
+            self.db.insert("categories", {"cat_name": category_name})
 
     def get_inventory(self, specification: dict = None):
         if specification:
@@ -61,6 +81,16 @@ class DataManager():
             inventory = self.db.select("inventory")
             
         return inventory
+
+    
+
+        
+    def get_item_supply_info(self, product_id, supplier_id):
+        # in development!
+        query = """
+            SELECT 
+                
+        """
 
     def get_item_info(self, id):
         query = """
@@ -94,21 +124,23 @@ if __name__ == '__main__':
     # data = [{"name": "camping", "description": "camping gear and equipment"}, {"name": "cooking", "description": "kettles, cooktops, and utensils for cooking"}, 
     #         {"name": "lighting", "description": "lanterns, flashlights, and other lighting equipment"}, {"name": "utility", "description": "utility items for survival"},]
 
-        
+    supplier = {"product_id": 9092360, "supplier_id": 1, "supplier_price": 16}
+    # DataManager().db.insert("product_suppliers", supplier)
 
-    nostolgballs = DataManager().db.select("products")
+
+    # nostolgballs = DataManager().db.select("products")
     categories = DataManager().get_categories()
     for iter, i in enumerate(data):
         for category in categories:
             if category["name"] == i["category"]:
                 # print(f"Category {i['category']} already exists")
                 # print(f"Category ID: {category['id']}")
-                print("funky data", data[iter])
-                # DataManager().db.insert("products", {"id": i["id"], "category_id": category["id"], 
+                # print("funky data", data[iter])
+                # DataManager().db.insert("suppliers", {"id": i["id"], "category_id": category["id"], 
                 #                                     "price": random.randint(16, 80), "title": i["name"], 
                 #                                     "description": i["description"], "image": i["image"]})
                 break
-        DataManager().db.insert("inventory", {"product_id": i["id"], "quantity": random.randint(5, 30)})
+        # DataManager().db.insert("inventory", {"product_id": i["id"], "quantity": random.randint(5, 30)})
         # print(f"Inserted category with ID: {category['id']} and title: {i['title']}")
 
     # command = """
@@ -120,25 +152,24 @@ if __name__ == '__main__':
     # FROM products
     # """
 
-    # command = """CREATE TABLE IF NOT EXISTS products (
-    #     id INTEGER PRIMARY KEY,
-    #     category_id INTEGER NOT NULL,
-    #     title TEXT NOT NULL,
-    #     image TEXT NOT NULL,
-    #     description TEXT NOT NULL,
-    #     price INTEGER NOT NULL,
+    command = """CREATE TABLE IF NOT EXISTS product_suppliers (
+        product_id INTEGER NOT NULL,
+        supplier_id INTEGER NOT NULL,
+        supplier_price INTEGER NOT NULL,
 
-    #     FOREIGN KEY (category_id) REFERENCES categories(id)
-    #         )"""
+        PRIMARY KEY (product_id, supplier_id),
 
-    # print(f"Executing command: {command}\n\n")
+        FOREIGN KEY (product_id) REFERENCES products(id),
+        FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+    )"""
+
     
     # results = DataManager().db.create_table(command)
     # results = DataManager().db.delete("products")
-    # DataManager().db.delete("products")
-    # results = DataManager().db.select("products")
-
-    # print(results)
+    # DataManager().db.delete("suppliers")
+    results = DataManager().db.select("suppliers", )
+    # results = DataManager().get_item_info(9092360)
+    print(results)
 
     DataManager().db.cursor.close()
     DataManager().db.conn.close()

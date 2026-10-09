@@ -80,11 +80,53 @@ def categories_get():
 
     return categories
 
+@app.route("/api/supplier", methods=["POST"])
+def set_supplier():
+    data = request.get_json()
+    DataManager().set_supplier(data["name"], data["email"], data["phone"])
+    return {"message": "Uploaded supplier data"}, 200
+
+@app.route("/api/supplier", methods=["GET"])
+def get_supplier():
+    supplier = DataManager().db.select("suppliers")
+    return supplier
+
+@app.route("/api/supplier", methods=["PUT"])
+def put_product_supplier():
+    data = request.get_json()
+    DataManager().db.update("suppliers", data)
+    return {"message": "Updated supplier details"}, 200
+
+# make delete function for both supplier and productsupplier
+
+@app.route("/api/product/supplier", methods=["POST"])
+def set_product_supplier():
+    data = request.get_json()
+    DataManager().set_product_supplier(data["product_id"], data["supplier_id"], data["supplier_price"])
+    return {"message": "Uploaded product supplier details"}, 200
+
+@app.route("/api/product/supplier", methods=["PUT"])
+def put_product_supplier():
+    data = request.get_json()
+    DataManager().db.update("product_suppliers", data)
+    return {"message": "Updated product supplier details"}, 200
+
+
+@app.route("/api/product/supplier", methods=["GET"])
+def get_product_supplier():
+    product_supplier = DataManager().db.select("product_suppliers")
+    
+    return product_supplier
+
 @app.route("/api/categories", methods=["POST"])
 def categories_send():
-    user_id = session.get("user_id")
+    
     data = request.get_json()
-    DataManager().db.insert("categories", {"user_id": user_id, "cat_name": data["category_name"]})
+
+    if data["description"]:
+        DataManager().add_category( data["category_name"], data["description"])
+    else:
+        DataManager().add_category( data["category_name"])
 
     return {"message": "Category creation complete!"}, 201
 

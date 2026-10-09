@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route} from 'react-router-dom';
 import axios from 'axios';
+
+export function Supplier(){
+    return(
+        
+    )
+}
+
 export default function Admin(){
     const [data, setData] = useState([]);
     const [activeNewItem, setActiveNewItem] = useState(false);
