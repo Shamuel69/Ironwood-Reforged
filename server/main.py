@@ -92,7 +92,7 @@ def get_supplier():
     return supplier
 
 @app.route("/api/supplier", methods=["PUT"])
-def put_product_supplier():
+def put_supplier():
     data = request.get_json()
     DataManager().db.update("suppliers", data)
     return {"message": "Updated supplier details"}, 200
