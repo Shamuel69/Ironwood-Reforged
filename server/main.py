@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 
-from server import DataManager
-from server.dataPlayer import dataPlayer
+from DataManager import DataManager
+from dataPlayer import dataPlayer
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="images", static_url_path="/server/images")
 app.secret_key = "8004628"
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 #get all this set up and return data to front end. might as well make the uploading on the admin page easy too.
@@ -50,8 +50,6 @@ def signup():
 
     session["user_id"] = user["id"]
 
-    DataManager().initialize_categories(user["id"])
-    
     return {"message": "Signed up!"}
 
 
@@ -83,7 +81,7 @@ def categories_get():
 @app.route("/api/supplier", methods=["POST"])
 def set_supplier():
     data = request.get_json()
-    DataManager().set_supplier(data["name"], data["email"], data["phone"])
+    DataManager().set_suppliers(data["name"], data["email"], data["phone"])
     return {"message": "Uploaded supplier data"}, 200
 
 @app.route("/api/supplier", methods=["GET"])
@@ -97,7 +95,20 @@ def put_supplier():
     DataManager().db.update("suppliers", data)
     return {"message": "Updated supplier details"}, 200
 
-# make delete function for both supplier and productsupplier
+@app.route("/api/supplier/<item_id>", methods=["DELETE"])
+def delete_supplier(item_id):
+    dataPlayer("server/ironwood.db").delete("suppliers", {"id": item_id})
+
+    supplier = DataManager().db.select("suppliers")
+    return supplier
+
+@app.route("/api/product/supplier/<item_id>", methods=["DELETE"])
+def delete_product_supplier(item_id):
+    dataPlayer("server/ironwood.db").delete("product_suppliers", {"id": item_id})
+    supplier = DataManager().db.select("product_suppliers")
+    return supplier
+
+
 
 @app.route("/api/product/supplier", methods=["POST"])
 def set_product_supplier():
@@ -114,6 +125,7 @@ def put_product_supplier():
 
 @app.route("/api/product/supplier", methods=["GET"])
 def get_product_supplier():
+    
     product_supplier = DataManager().db.select("product_suppliers")
     
     return product_supplier

@@ -82,15 +82,33 @@ class DataManager():
             
         return inventory
 
-    
-
-        
     def get_item_supply_info(self, product_id, supplier_id):
         # in development!
         query = """
             SELECT 
+                products.id,
+                products.title,
+                products.price,
+                suppliers.id,
+                suppliers.name,
+                suppliers.email,
+                COALESCE(suppliers.phone, "") as supplierNumber,
+                product_suppliers.supplier_price
+
+            FROM product_suppliers
+            JOIN products
+                ON product_suppliers.product_id = products.id
+            JOIN suppliers
+                ON product_suppliers.supplier_id = suppliers.id
+
+            WHERE products.id = ?
+                AND suppliers.id = ?
+
+            GROUP BY products.id, suppliers.id
                 
         """
+        self.db.cursor.execute(query, (product_id, supplier_id))
+        return [dict(row) for row in self.db.cursor.fetchall()]
 
     def get_item_info(self, id):
         query = """
@@ -115,6 +133,14 @@ class DataManager():
                 """
         self.db.cursor.execute(query, (id,))
         return [dict(row) for row in self.db.cursor.fetchall()]
+
+    def QueryName(self, session_id):
+        username = self.db.select("users", {"id": session_id})
+        username = username[0]["username"]
+        dictionary = {"id": session_id, "username": username}
+        
+        return dictionary
+    
     
 if __name__ == '__main__':
     # db = DataManager().db
@@ -152,24 +178,21 @@ if __name__ == '__main__':
     # FROM products
     # """
 
-    command = """CREATE TABLE IF NOT EXISTS product_suppliers (
-        product_id INTEGER NOT NULL,
-        supplier_id INTEGER NOT NULL,
-        supplier_price INTEGER NOT NULL,
-
-        PRIMARY KEY (product_id, supplier_id),
-
-        FOREIGN KEY (product_id) REFERENCES products(id),
-        FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
-    )"""
-
+    command = """CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL,
+        password_hash TEXT NOT NULL,
+        
+        UNIQUE (username)
+            )"""
     
     # results = DataManager().db.create_table(command)
+    # results = DataManager().db.select("product_suppliers")
     # results = DataManager().db.delete("products")
-    # DataManager().db.delete("suppliers")
-    results = DataManager().db.select("suppliers", )
-    # results = DataManager().get_item_info(9092360)
-    print(results)
+    # DataManager().db.delete("users")
+    # results = DataManager().db.select("suppliers", )
+    # results = DataManager().get_item_supply_info(9092360, 1)
+    # print(results)
 
     DataManager().db.cursor.close()
     DataManager().db.conn.close()

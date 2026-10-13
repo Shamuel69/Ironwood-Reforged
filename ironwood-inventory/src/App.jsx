@@ -37,6 +37,8 @@ function Footer(){
 }
 
 function Home(){
+
+  
   return (
     <>
       <div className="w-full md:w-[65%] text-(--text-primary) mx-auto min-h-screen md:min-h-dvh">

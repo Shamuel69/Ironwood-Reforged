@@ -28,7 +28,7 @@ export function InventoryItem() {
     return (
         <>
             {itemData && itemData[0] ? (
-              <div className="w-full md:w-[75%] mx-auto min-h-screen md:min-h-dvh flex flex-col md:flex-row gap-4 p-4 md:p-0">
+              <div className="w-full md:w-[75%] text-(--text-primary) mx-auto min-h-screen md:min-h-dvh flex flex-col md:flex-row gap-4 p-4 md:p-0">
                   {/* <button onClick={() => window.history.back()} className=" w-2xl  text-white border-1  px-4 py-2 rounded">
                       {` back `}
                   </button> */}
@@ -155,19 +155,20 @@ export function Inventory() {
               </div>
             </div>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mx-auto p-3 md:p-0 gap-5 md:gap-4 ">
-            {filteredData.map((item) => (
-              <Link to={`/inventory/${item.id}`} key={item.id} className="h-[240px] w-full md:w-[260px] flex flex-col justify-between shadow hover:shadow-2xl rounded transition-shadow duration-300">
-                <img src={`http://localhost:8080${item.image}`} alt={item.name} className="w-full  h-[60%] object-cover" />
-                <div key={item.id} className="border-1 border-t-0 h-[40%] p-2 flex flex-col justify-between gap-0">
-                  <h2 className="overflow-hidden text-ellipsis whitespace-nowrap">{item.name}</h2>
-                  <div className="flex flex-col text-sm ">
-                    <p>Price: ${item.price}</p>
-                    <p>Quantity: {item.quantity}</p>
+          <div className="pb-5 pt-5">
+            <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mx-auto p-3 md:p-0 gap-5 md:gap-4 ">
+              {filteredData.map((item) => (
+                <Link to={`/inventory/${item.id}`} key={item.id} className="h-[240px] w-full md:w-[260px] flex flex-col justify-between shadow  hover:shadow-2xl rounded transition-shadow duration-300">
+                  <img src={`http://localhost:8080${item.image}`} alt={item.name} className="w-full  h-[60%] object-cover" />
+                  <div key={item.id} className="border-1 border-(--border) border-t-0 h-[40%] p-2 flex flex-col justify-between gap-0">
+                    <h2 className="overflow-hidden text-ellipsis text-lg whitespace-nowrap">{item.title}</h2>
+                    <div className="flex flex-col  ">
+                      <p>Price: ${item.price}</p>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       )

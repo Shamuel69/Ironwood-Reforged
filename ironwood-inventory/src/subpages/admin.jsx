@@ -2,9 +2,37 @@ import { useState, useEffect } from 'react'
 import { Routes, Route} from 'react-router-dom';
 import axios from 'axios';
 
+export function categories(){
+    const [data, setData] = useState([]);
+
+
+    const fetchData = async () => {
+
+        try {
+            const response = await axios.get('http://localhost:8080/api/categories');
+            setData(response.data);
+            console.log('Data fetched successfully:', response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    
+    return(
+        <>
+            <div className="w-full h-screen">
+                {data.map(category => (
+                    <h2>{category.nam}</h2>
+                ))}
+            </div>
+
+        </>
+    )
+}
+
 export function Supplier(){
     return(
-        
+        <>
+        </>
     )
 }
 
@@ -54,7 +82,7 @@ export default function Admin(){
         fetchData(); 
     }
     return (
-    <div className="w-full md:w-[75%] mx-auto h-dvh">
+    <div className="w-full md:w-[75%] mx-auto min-h-dvh">
         <div className="flex flex-row justify-between h-35 ">
             <div className="flex flex-col">
                 <h1>Admin Panel</h1>
