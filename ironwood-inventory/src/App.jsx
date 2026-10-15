@@ -9,7 +9,7 @@ import camping2 from './assets/camping_kit5.jpg'
 import {Inventory, InventoryItem} from './subpages/inventory.jsx'
 import { Routes, Route, Link} from 'react-router-dom';
 import axios from 'axios';
-import Admin from './subpages/admin.jsx'
+import Admin, { Supplier } from './subpages/admin.jsx'
 import Signin, { Signup } from './subpages/signin.jsx'
 
 
@@ -145,6 +145,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/admin" element={<Admin />}/>
+            <Route path="/admin/supply_items" element={<Supplier />}/>
+
             <Route path="/signin" element={<Signin />}/>
             <Route path="/signup" element={<Signup />}/>
 
