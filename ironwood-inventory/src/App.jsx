@@ -144,8 +144,7 @@ function App() {
       <section id="display_area" className="w-full min-h-screen bg-(--bg-secondary)">
         <Routes>
             <Route path="/" element={<Home />}/>
-            <Route path="/admin" element={<Admin />}/>
-            <Route path="/admin/supply_items" element={<Supplier />}/>
+            <Route path="/admin/*" element={<Admin />}/>
 
             <Route path="/signin" element={<Signin />}/>
             <Route path="/signup" element={<Signup />}/>

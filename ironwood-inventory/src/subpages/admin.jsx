@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link} from 'react-router-dom';
+import { Routes, Route, useParams, Link} from 'react-router-dom';
 import axios from 'axios';
 import supply_item from '../assets/delivery-box-11392.svg'
 import supplier from '../assets/truck-1058.svg'
 
 
-export function categories(){
+function Categories(){
     const [data, setData] = useState([]);
-
+    const [active, setActive] = useState([])
 
     const fetchData = async () => {
 
@@ -20,13 +20,174 @@ export function categories(){
         }
     };
     
+    useEffect(()=>{
+        fetchData()
+    },[])
+
     return(
         <>
-            <div className="w-full h-screen">
-                {data.map(category => (
-                    <h2>{category.name}</h2>
-                ))}
+        {loading ? (
+            <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
+                <p>Loading...</p>
             </div>
+        ):(
+            <div className="text-(--text-primary) ">
+                <div className="w-[90%] flex flex-col text-2xl gap-5 mx-auto">
+                    <div className="flex flex-row align-middle p-5 border-b border-(--border)">
+                        <h2 className="p-5">Categories:</h2>
+                        <button type="button">Edit</button>
+                        
+                    </div>
+
+                    {data.map(category => (
+                        <div >
+                            <button type="button">Edit</button>
+                            <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
+                                    <label className="text-3xl">
+                                        {category.name}
+                                    </label>
+                                    <label className="text-xl text-(--text-tertiary)">
+                                        Category ID: {category.id}
+                                    </label>
+                                    <label className="text-xl ">
+                                        Description: <span className=' font-semibold'>{category.description}</span></label>
+                                    
+                                </div>
+
+                        </div>
+                    ))}
+                    
+                </div>
+            </div>
+
+            )}
+
+        </>
+    )
+}
+
+function SupplyItemDetails( ){
+    const [data, setData] = useState([])
+    const { product_id, supplier_id } = useParams(); 
+    const [loading, setLoading] = useState(true)
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/product/supplier/${product_id}/${supplier_id}`);
+            setData(response.data);
+            // setCategoryFilter(response2.data)
+            console.log('Data fetched successfully:', response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    
+    useEffect(() => {
+        fetchData();
+    }, []);
+    return(
+        <div className="text-(--text-primary) flex flex-col gap-5">
+            {loading ? (
+                <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
+                    <p>Loading...</p>
+                </div>
+            ):(
+                <div className="max-w-full overflow-x-auto lg:w-[90%] mx-auto ">
+                    <div>
+                        <h2 className="text-2xl pt-7.5">Item data:</h2>
+                            <div className=" items-start border-b border-(--border) p-5 ">
+                            <div className="w-[95%] mx-auto  flex flex-col gap-5">
+                                <h2 className="font-semibold text-4xl">{data[0].name}</h2>
+                                <div className="flex gap-5 text-xl">
+                                    <label>Id: {data[0].id}</label>
+                                    <label>Selling price: ${data[0].price}</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h2 className="text-2xl pt-7.5">Supplier data:</h2>
+                            <div className="flex flex-col items-start border-b border-(--border) p-5 gap-5 ">
+                            <div className="w-[95%] mx-auto flex flex-col gap-5">
+                                <h2 className="font-semibold text-4xl">{data[0].title}</h2>
+                                <div className="flex flex-col md:flex-row gap-5 text-xl">
+                                    <label>Email: {data[0].email}</label>
+                                    <label>Phone Number: #{data[0].supplierNumber}</label>
+                                    <label>Supplier price: ${data[0].supplier_price}</label>
+
+                                        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    </div>
+            )}
+        </div>
+    )
+    
+}
+
+export function SupplyItems(){
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true);
+    const [categoryFilter, setCategoryFilter] = useState([])
+    const [searchFilter, setSearchFilter] = useState('');
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/product/supplier');
+            // const response2 = await axios.get('http://localhost:8080/api/categories');
+            setData(response.data);
+            // setCategoryFilter(response2.data)
+            console.log('Data fetched successfully:', response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+    
+    return ( 
+        <>
+        {loading ? (
+            <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
+                <p>Loading...</p>
+            </div>
+        ):(
+            <div className="text-(--text-primary) ">
+                <div className="w-[90%] flex flex-col text-2xl gap-5 mx-auto">
+                    <h2 className="p-5">Items and Supplies:</h2>
+                    {data.map(item => (
+                        <Link to={`/admin/supply_items/${item.product_id}/${item.supplier_id}`}>
+                            <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
+                                    <label className="text-3xl">
+                                        {item.product_name}
+                                    </label>
+
+                                    <label className="text-xl text-(--text-tertiary)">
+                                        Product ID: {item.product_id}
+                                    </label>
+                                    <label className="text-xl text-(--text-secondary)">
+                                        {item.supplier_name}
+                                    </label>
+                                    <label className="text-xl ">
+                                        Supplier price: <span className='text-(--accent) font-bold'>${(item.supplier_price / 100).toFixed(2)}</span></label>
+                                    
+                                </div>
+
+                        </Link>
+                    ))}
+                    
+                </div>
+            </div>
+
+            )}
 
         </>
     )
@@ -39,13 +200,27 @@ export default function Admin() {
     
     return(
         <div className="relative w-full min-h-screen">
-            <div className="w-5 md:w-20 h-full absolute bg-(--bg-primary) left-0 flex flex-col align-middle">
+            <div id="sidebar" className="w-5 md:w-20 h-full absolute bg-(--bg-primary) left-0 flex flex-col align-middle">
                 <div className="p-2 ">
-                    <Link className="" to="/admin/supply_items"><img src={supply_item} alt="supply item"/></Link>
+                    <Link className="" to="/admin/supply_items">
+                        <img src={supply_item} alt="supply item"/>
+                        </Link>
+
                     <img src={supplier} alt="supplier"/>
-                    <img src={supply_item} alt="supply item"/>
+                    <Link className="border border-transparent bg-(--bg-primary) hover:bg-(--bg-secondary) duration-150" to="/admin/categories">
+                        <img src={supply_item} alt="supply item"/>
+                    </Link>
                 </div>
 
+            </div>
+            <div id="content" className="w-full md:w-[calc(100%-5rem)] h-full absolute right-0 bg-(--bg-secondary)">
+                <Routes>
+
+                    <Route path="/supply_items" element={<SupplyItems />} />
+                    <Route path="/category" element={<Categories />} />
+                    
+                    <Route path="/supply_items/:product_id/:supplier_id" element={<SupplyItemDetails />} />
+                </Routes>
             </div>
         </div>
     )
@@ -56,6 +231,7 @@ export default function Admin() {
 export function Supplier(){
     return(
         <>
+        <h2>log</h2>
         </>
     )
 }

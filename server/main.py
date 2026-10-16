@@ -67,10 +67,6 @@ def username():
 
 @app.route("/api/categories", methods=["GET"])
 def categories_get():
-    user_id = session.get("user_id")
-    
-    if not user_id:
-        return {"error": "Not signed in"}, 401
 
     # maybe use later
     # categories = DataManager().db.select("categories", {"user_id": user_id})
@@ -108,6 +104,10 @@ def delete_product_supplier(item_id):
     supplier = DataManager().db.select("product_suppliers")
     return supplier
 
+@app.route("/api/product/supplier/<item_id>/<supplier_id>", methods=["GET"])
+def get_product_supplier_info(item_id, supplier_id):
+    supplier_item_info = DataManager().get_item_supply_info(item_id, supplier_id)
+    return supplier_item_info
 
 
 @app.route("/api/product/supplier", methods=["POST"])
@@ -126,7 +126,7 @@ def put_product_supplier():
 @app.route("/api/product/supplier", methods=["GET"])
 def get_product_supplier():
     
-    product_supplier = DataManager().db.select("product_suppliers")
+    product_supplier = DataManager().get_item_supply()
     
     return product_supplier
 

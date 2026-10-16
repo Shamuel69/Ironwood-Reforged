@@ -82,6 +82,27 @@ class DataManager():
             
         return inventory
 
+    def get_item_supply(self):
+        query = """
+            SELECT 
+                product_suppliers.product_id,
+                products.title AS product_name,
+                product_suppliers.supplier_id,
+                suppliers.name AS supplier_name,
+                product_suppliers.supplier_price
+
+            FROM product_suppliers
+            JOIN products
+                ON product_suppliers.product_id = products.id
+            JOIN suppliers
+                ON product_suppliers.supplier_id = suppliers.id
+            
+        """
+
+        self.db.cursor.execute(query,)
+        return [dict(row) for row in self.db.cursor.fetchall()]
+
+
     def get_item_supply_info(self, product_id, supplier_id):
         # in development!
         query = """
