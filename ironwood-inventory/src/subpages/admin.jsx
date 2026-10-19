@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useParams, Link} from 'react-router-dom';
+import { Routes, Route, useParams, Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import supply_item from '../assets/delivery-box-11392.svg'
 import supplier from '../assets/truck-1058.svg'
@@ -7,22 +7,50 @@ import supplier from '../assets/truck-1058.svg'
 
 function Categories(){
     const [data, setData] = useState([]);
-    const [active, setActive] = useState([])
-
+    const [loading, setLoading] = useState(true)
+    const [addNew, setAddNew] = useState(false)
+    const [activeEditItem, setActiveEditItem] = useState([]);
+    const nav = useNavigate()
     const fetchData = async () => {
-
         try {
             const response = await axios.get('http://localhost:8080/api/categories');
+            console.log('Data fetched successfully:');
+            console.log('Data fetched successfully:', response);
             setData(response.data);
-            console.log('Data fetched successfully:', response.data);
+            
         } catch (error) {
             console.error('Error fetching data:', error);
+        }finally{
+            setLoading(false)
         }
     };
-    
+    const handleNewItem = async(e) => {
+        e.preventDefault();
+        const formdata = new FormData(e.target);
+        const categoryData = Object.fromEntries(formdata.entries())
+
+        const res = await axios.post("http://localhost:8080/api/categories", categoryData, {withCredentials: true})
+        nav(0)
+    }
+
     useEffect(()=>{
-        fetchData()
+        fetchData();
     },[])
+    const handleDelete = async (id) => {
+        console.log(`Delete item with ID: ${id}`);
+        const response = await axios.delete(`http://localhost:8080/api/categories/${id}`);
+        console.log(`Delete response for item with ID: ${id}`, response.data);
+        nav(0)
+    }
+
+    const handleEdit = async (e, id) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const updatedItem = Object.fromEntries(formData.entries());
+        const response = await axios.put(`http://localhost:8080/api/categories/${id}`, updatedItem);
+        console.log(`Edit item with ID: ${id}`);
+        nav(0)
+    }
 
     return(
         <>
@@ -31,28 +59,78 @@ function Categories(){
                 <p>Loading...</p>
             </div>
         ):(
-            <div className="text-(--text-primary) ">
-                <div className="w-[90%] flex flex-col text-2xl gap-5 mx-auto">
-                    <div className="flex flex-row align-middle p-5 border-b border-(--border)">
-                        <h2 className="p-5">Categories:</h2>
-                        <button type="button">Edit</button>
+            
+            
+            <div className="text-(--text-primary) min-h-dvh">
+                <div className="w-[95%] md:w-[90%] flex flex-col   gap-5 mx-auto">
+                    <div className="flex flex-row justify-between align-middle p-2.5 md:p-5 border-b border-(--border)">
+                        <h2 className="p-2.5 md:p-5 text-2xl">Categories:</h2>
+                        <button type="button" onClick={() => setAddNew((prev) => !prev)} className="bg-(--bg-primary) hover:bg-(--bg-tertiary) duration-150 rounded-xl px-2  md:text-md">Add New+</button>
                         
                     </div>
 
+                    {addNew && (
+                        <div className="w-full md:w-[90%] mx-auto">
+                            <h2 className=" underline underline-offset-5  text-3xl h-fit">Make a new account!</h2>
+                            <form onSubmit={handleNewItem}>
+                            <div className="mb-4 p-2">
+                                <label className="block mb-2">Name:</label>
+                                <input type="text" name="name" placeholder="pickaxe" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            </div>
+                            
+                            <div className="mb-4 p-2">
+                                <label className="block mb-2">Description:</label>
+                                <input type="text" name="description" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            </div>
+                            
+                            <button type="submit" className="bg-(--accent) hover:bg-(--accent-hover) duration-300 text-white px-3 py-1 rounded mr-2">
+                                Submit
+                            </button>
+                            </form>
+                        </div>
+                    )}
+
                     {data.map(category => (
-                        <div >
-                            <button type="button">Edit</button>
-                            <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
-                                    <label className="text-3xl">
-                                        {category.name}
-                                    </label>
-                                    <label className="text-xl text-(--text-tertiary)">
-                                        Category ID: {category.id}
-                                    </label>
-                                    <label className="text-xl ">
-                                        Description: <span className=' font-semibold'>{category.description}</span></label>
-                                    
-                                </div>
+                        <div key={category.id} className="">
+                            <div className="w-full md:w-[90%]  flex flex-row justify-between mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
+                            {activeEditItem === category.id && activeEditItem !== 0 ? (
+                                <form onSubmit={(e) => handleEdit(e, category.id)} className="flex flex-col gap-2 w-full">
+                                    <div className="flex gap-2 items-center w-full">
+                                        <label className="block mb-2">Name:</label>
+                                        <input type="text" name="name" defaultValue={category.name} className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                                    </div>
+                                    <div className="flex gap-2 items-center ">
+                                        <label className="block mb-2">Description:</label>
+                                        <textarea name="description" defaultValue={category.description} className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                                    </div>
+                                    <div className="flex gap-2 w-[30%] items-center ">
+                                        <button type="submit" className="bg-(--accent) hover:bg-(--accent-hover) duration-300 text-white px-3 py-1 rounded mr-2">
+                                            Update
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <>
+                                    <div className="flex flex-col">
+                                        <label className="text-3xl">
+                                            {category.name}
+                                        </label>
+                                        <label className="text-xl text-(--text-tertiary)">
+                                            Category ID: {category.id}
+                                        </label>
+                                        <label className="text-xl ">
+                                            Description: <span className=' font-semibold'>{category.description}</span>
+                                        </label>
+                                        
+                                    </div>
+                                    <div className="flex flex-col justify-between">
+                                        <button type="button" onClick={() => setActiveEditItem(category.id)} className="bg-(--bg-primary) px-3 py-1.5 rounded hover:bg-(--bg-tertiary) duration-150 md:text-md">Edit</button>
+                                        <button className="bg-red-500 text-white px-3 duration-150 py-1 rounded hover:bg-red-600 mt-2" onClick={() => handleDelete(category.id)}>Delete</button>
+                                    </div>
+                                </>
+                            )
+                                }
+                            </div>
 
                         </div>
                     ))}
@@ -161,7 +239,7 @@ export function SupplyItems(){
             </div>
         ):(
             <div className="text-(--text-primary) ">
-                <div className="w-[90%] flex flex-col text-2xl gap-5 mx-auto">
+                <div className="w-full md:w-[90%] flex flex-col text-2xl gap-5 mx-auto">
                     <h2 className="p-5">Items and Supplies:</h2>
                     {data.map(item => (
                         <Link to={`/admin/supply_items/${item.product_id}/${item.supplier_id}`}>
@@ -205,8 +283,9 @@ export default function Admin() {
                     <Link className="" to="/admin/supply_items">
                         <img src={supply_item} alt="supply item"/>
                         </Link>
-
-                    <img src={supplier} alt="supplier"/>
+                    <Link className="border border-transparent bg-(--bg-primary) hover:bg-(--bg-secondary) duration-150" to="/admin/suppliers">
+                        <img src={supplier} alt="supplier"/>
+                    </Link>
                     <Link className="border border-transparent bg-(--bg-primary) hover:bg-(--bg-secondary) duration-150" to="/admin/categories">
                         <img src={supply_item} alt="supply item"/>
                     </Link>
@@ -217,8 +296,8 @@ export default function Admin() {
                 <Routes>
 
                     <Route path="/supply_items" element={<SupplyItems />} />
-                    <Route path="/category" element={<Categories />} />
-                    
+                    <Route path="/categories" element={<Categories />} />                    
+                    <Route path="/suppliers" element={<Supplier />} />                    
                     <Route path="/supply_items/:product_id/:supplier_id" element={<SupplyItemDetails />} />
                 </Routes>
             </div>
@@ -229,11 +308,108 @@ export default function Admin() {
 
 
 export function Supplier(){
-    return(
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true);
+    const [addNew, setAddNew] = useState(false)
+    const nav = useNavigate()
+
+    const handleNewItem = async(e) => {
+        e.preventDefault();
+        const formdata = new FormData(e.target);
+        const categoryData = Object.fromEntries(formdata.entries())
+
+        const res = await axios.post("http://localhost:8080/api/supplier", categoryData, {withCredentials: true})
+        nav(0)
+    }
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/supplier');
+            setData(response.data);
+            console.log('Data fetched successfully:', response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+    
+    return ( 
         <>
-        <h2>log</h2>
+        {loading ? (
+            <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
+                <p>Loading...</p>
+            </div>
+        ):(
+            <div className="text-(--text-primary) min-h-screen">
+                <div className="w-[90%] flex flex-col text-2xl gap-5 mx-auto">
+                    <div className="p-5 h-fit flex justify-between border-b border-(--border)">
+                        <div>
+                            <h2 className="pb-2.5">Suppliers:</h2>
+                            <p className=" text-(--text-secondary) text-lg">Manage suppliers and their supplied products</p>
+                        </div>
+                        <button type="button" onClick={() => setAddNew((prev) => !prev)} className="bg-(--accent) hover:bg-(--accent-hover) duration-150 rounded-xl px-2  md:text-md">Add New+</button>
+
+                    </div>
+                    {addNew && (
+                        <div className="w-full md:w-[90%] text-2xl mx-auto">
+                            <h2 className=" underline underline-offset-5   h-fit">Make a new account!</h2>
+                            <form onSubmit={handleNewItem}>
+                            <div className="mb-4 p-2">
+                                <label className="block mb-2">Name:</label>
+                                <input type="text" name="name" placeholder="pickaxe co." className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            </div>
+                            
+                            <div className="mb-4 p-2">
+                                <label className="block mb-2">Email:</label>
+                                <input type="text" name="email" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            </div>
+                            <div className="mb-4 p-2">
+                                <label className="block mb-2">Phone:</label>
+                                <input type="text" name="phone" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            </div>
+                            
+                            <button type="submit" className="bg-(--accent) hover:bg-(--accent-hover) duration-300 text-white px-3 py-1 rounded mr-2">
+                                Submit
+                            </button>
+                            </form>
+                        </div>
+                    )}
+                    {data.map(item => (
+                        <Link to={`/admin/supplier/${item.id}`}>
+                            <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
+                                    <label className="text-3xl">
+                                        {item.name}
+                                    </label>
+                                    <label className="text-xl text-(--text-tertiary)">
+                                        Supplier ID: {item.id}
+                                    </label>
+                                    <label className="text-xl text-(--text-secondary)">
+                                        {item.supplier_name}
+                                    </label>
+                                    <label className="text-xl ">
+                                        Supplier phone number: <span className="italic">{item.phone}</span>
+                                    </label>
+                                    <label className="text-xl ">
+                                        Supplier Email: {item.email}
+                                    </label>
+                                    
+                                </div>
+
+                        </Link>
+                    ))}
+                    
+                </div>
+            </div>
+
+            )}
+
         </>
-    )
+        )
 }
 
 // export default function Admin(){

@@ -70,9 +70,9 @@ class DataManager():
 
     def add_category(self, category_name, description:str = None):
         if description:
-            self.db.insert("categories", { "cat_name": category_name, "description": description})
+            self.db.insert("categories", { "name": category_name, "description": description})
         else:
-            self.db.insert("categories", {"cat_name": category_name})
+            self.db.insert("categories", {"name": category_name})
 
     def get_inventory(self, specification: dict = None):
         if specification:
@@ -162,6 +162,22 @@ class DataManager():
         
         return dictionary
     
+    def SupplierDetails(self, supplier_id):
+        query = """
+            SELECT
+                products.id,
+                products.title,
+                products.price,
+                product_suppliers.supplier_price
+
+            FROM product_suppliers
+            LEFT JOIN products 
+                ON product_suppliers.id = products.category_id
+                
+            WHERE product_suppliers.supplier_id = ?
+        """
+        self.db.cursor.execute(query, (supplier_id,))
+        return [dict(row) for row in self.db.cursor.fetchall()]
     
 if __name__ == '__main__':
     # db = DataManager().db

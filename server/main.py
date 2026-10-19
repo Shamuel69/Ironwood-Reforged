@@ -67,11 +67,24 @@ def username():
 
 @app.route("/api/categories", methods=["GET"])
 def categories_get():
-
+    print("YAYA")
     # maybe use later
     # categories = DataManager().db.select("categories", {"user_id": user_id})
-    categories = DataManager().db.select("categories")
+    categories = DataManager().get_categories()
+    return categories
 
+@app.route("/api/categories/<item_id>", methods=["PUT"])
+def update_category(item_id):
+    print(f"API request received to update item with ID: {item_id}")
+    # Implement item update logic here
+    DataManager().db.update("categories", {"id": item_id}, request.get_json())
+    return jsonify({"message": f"Item with ID {item_id} updated successfully."})
+
+@app.route("/api/categories/<item_id>", methods=["DELETE"])
+def delete_category(item_id):
+    DataManager().db.delete("categories", {"id": item_id})
+
+    categories = DataManager().db.select("categories")
     return categories
 
 @app.route("/api/supplier", methods=["POST"])
@@ -93,7 +106,7 @@ def put_supplier():
 
 @app.route("/api/supplier/<item_id>", methods=["DELETE"])
 def delete_supplier(item_id):
-    dataPlayer("server/ironwood.db").delete("suppliers", {"id": item_id})
+    DataManager().db.delete("suppliers", {"id": item_id})
 
     supplier = DataManager().db.select("suppliers")
     return supplier
@@ -136,9 +149,9 @@ def categories_send():
     data = request.get_json()
 
     if data["description"]:
-        DataManager().add_category( data["category_name"], data["description"])
+        DataManager().add_category( data["name"], data["description"])
     else:
-        DataManager().add_category( data["category_name"])
+        DataManager().add_category( data["name"])
 
     return {"message": "Category creation complete!"}, 201
 
