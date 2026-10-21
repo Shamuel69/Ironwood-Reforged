@@ -98,6 +98,11 @@ def get_supplier():
     supplier = DataManager().db.select("suppliers")
     return supplier
 
+@app.route("/api/supplier/<item_id>", methods=["GET"])
+def get_supplier_details(item_id):
+    supplier = DataManager().db.select("suppliers", {"id": item_id})
+    return supplier
+
 @app.route("/api/supplier", methods=["PUT"])
 def put_supplier():
     data = request.get_json()
@@ -122,6 +127,31 @@ def get_product_supplier_info(item_id, supplier_id):
     supplier_item_info = DataManager().get_item_supply_info(item_id, supplier_id)
     return supplier_item_info
 
+@app.route("/api/product/supplier/details", methods=["GET"])
+def get_products():
+    supplier_item_info = DataManager().product_details()
+    return supplier_item_info
+
+@app.route("/api/product/supplier/details/<item_id>", methods=["GET"])
+def get_products_details(item_id):
+    supplier_item_info = DataManager().product_SUPER_details(item_id)
+    return supplier_item_info
+
+
+# REBUILD THIS AFTER YOU GET DATA
+@app.route("/api/product/supplier/details/<item_id>", methods=["PUT"])
+def PUT_products_details(item_id):
+    data = request.get_json()
+
+    product = {"id": data["id"], "image": data["image"], "title": data["prod_name"], "price": data["price"]}
+    product_supplier = {"product_id": data["id"], "supplier_id": data["supp_id"]}
+    inventory = {"product_id": data["id"], "quantity": data["quantity"]}
+
+    DataManager().db.update("product_suppliers", {"product_id":item_id}, product_supplier)
+    DataManager().db.update("products", {"id":item_id}, product)
+    DataManager().db.update("inventory", {"product_id":item_id}, inventory)
+    
+    return {"message": "Updated product supplier details"}, 200
 
 @app.route("/api/product/supplier", methods=["POST"])
 def set_product_supplier():
@@ -129,9 +159,11 @@ def set_product_supplier():
     DataManager().set_product_supplier(data["product_id"], data["supplier_id"], data["supplier_price"])
     return {"message": "Uploaded product supplier details"}, 200
 
-@app.route("/api/product/supplier", methods=["PUT"])
+@app.route("/api/product/supplier/<item_id>", methods=["PUT"])
 def put_product_supplier():
     data = request.get_json()
+
+    
     DataManager().db.update("product_suppliers", data)
     return {"message": "Updated product supplier details"}, 200
 
@@ -174,6 +206,9 @@ def update_item(item_id):
 def delete_item(item_id):
     print(f"API request received to delete item with ID: {item_id}")
     dataPlayer("server/ironwood.db").delete("products", {"id": item_id})
+    dataPlayer("server/ironwood.db").delete("product_suppliers", {"product_id": item_id})
+    dataPlayer("server/ironwood.db").delete("inventory", {"product_id": item_id})
+
     return jsonify({"message": f"Item with ID {item_id} deleted successfully."})
 
 @app.route("/api/inventory", methods=["GET"])

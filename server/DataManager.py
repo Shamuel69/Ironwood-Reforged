@@ -161,6 +161,51 @@ class DataManager():
         dictionary = {"id": session_id, "username": username}
         
         return dictionary
+
+
+    def product_SUPER_details(self, product_id):
+            query = """
+                SELECT
+                    products.id,
+                    products.title as prod_name,
+                    products.image,
+                    products.description,
+                    products.price as prod_price,
+                    inventory.quantity as quantity,
+                    COALESCE(categories.name, 'Unknown') as cat_name,
+                    suppliers.name as sup_name,
+                    suppliers.id as sup_id,
+                    product_suppliers.supplier_price as sup_price
+
+                FROM products
+                LEFT JOIN inventory
+                    ON products.id = inventory.product_id
+                LEFT JOIN categories
+                    ON products.category_id = categories.id
+                LEFT JOIN product_suppliers
+                    ON products.id = product_suppliers.product_id
+                LEFT JOIN suppliers
+                    ON product_suppliers.supplier_id = suppliers.id
+                WHERE products.id = ?
+            """
+            self.db.cursor.execute(query, (product_id,))
+            return [dict(row) for row in self.db.cursor.fetchall()]
+        
+
+    def product_details(self):
+            query = """
+                SELECT
+                    products.id,
+                    products.title,
+                    products.price,
+                    inventory.quantity
+    
+                FROM products
+                LEFT JOIN inventory 
+                    ON products.id = inventory.product_id
+            """
+            self.db.cursor.execute(query, )
+            return [dict(row) for row in self.db.cursor.fetchall()]
     
     def SupplierDetails(self, supplier_id):
         query = """
@@ -225,11 +270,12 @@ if __name__ == '__main__':
     
     # results = DataManager().db.create_table(command)
     # results = DataManager().db.select("product_suppliers")
-    # results = DataManager().db.delete("products")
+    # results = DataManager().db.select("products")
     # DataManager().db.delete("users")
     # results = DataManager().db.select("suppliers", )
+    results = [DataManager().product_SUPER_details(9092360), DataManager().product_SUPER_details(9092350)]
     # results = DataManager().get_item_supply_info(9092360, 1)
-    # print(results)
+    print(results)
 
     DataManager().db.cursor.close()
     DataManager().db.conn.close()

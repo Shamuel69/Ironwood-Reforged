@@ -141,7 +141,7 @@ function App() {
         </div>
       </section>
       
-      <section id="display_area" className="w-full min-h-screen bg-(--bg-secondary)">
+      <section id="display_area" className="w-full min-h-screen md:min-h-dvh bg-(--bg-secondary)">
         <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/admin/*" element={<Admin />}/>
