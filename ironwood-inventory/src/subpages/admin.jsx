@@ -4,6 +4,7 @@ import axios from 'axios';
 import supply_item from '../assets/delivery-box-11392.svg'
 import supplier from '../assets/truck-1058.svg'
 import products from '../assets/soap-and-shampoo.svg'
+import edit_button from '../assets/beige-pencil.svg'
 
 
 function Categories(){
@@ -311,11 +312,12 @@ export default function Admin() {
 
 
 export function ITEM_DETAILS() {
-    // i had AI assist on this page inparticular. NOTHING is vibecoded, i had AI redecorate the page for me
+    // i had AI assist on this page inparticular. NOTHING is vibecoded, i had AI redecorate some of the page for me
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [supplier, setSupplier] = useState([])
     const [activeEditItem, setActiveEditItem] = useState(false);
+    const [activeEditSupplier, setActiveEditSupplier] = useState(null);
     const [activeAddSupplier, setActiveAddSupplier] = useState(false)
     const [addNewSupplier, setAddNewSupplier] = useState(false)
     const nav = useNavigate();
@@ -351,24 +353,26 @@ export function ITEM_DETAILS() {
             );
 
             console.log("Delete response:", response.data);
-            nav("admin/inventory");
+            nav(0);
         } catch (error) {
             console.error("Error deleting product:", error);
         }
     };
 
-    const handleDeleteSupplier = async (id) => {
+    const handleDeleteSupplier = async (product_id, supplier_id) => {
         try {
             const response = await axios.delete(
-                `http://localhost:8080/api/suppliers/${id}`
+                `http://localhost:8080/api/supplier/${product_id}/${supplier_id}`
             );
 
             console.log("Delete response:", response.data);
-            nav("admin/inventory");
+            nav(0);
         } catch (error) {
             console.error("Error deleting product:", error);
         }
     };
+
+    
 
     const addSupplier = async (e, id, insert_or_new) => {
         e.preventDefault();
@@ -414,6 +418,28 @@ export function ITEM_DETAILS() {
             console.log("yeah we goofed up")
         }
     }
+
+    const handleEditSupplier = async (e, id, supplier_id) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const updatedItem = Object.fromEntries(formData.entries());
+        const super_updatedItems = {supplier_id: supplier_id, ...updatedItem}
+
+        try {
+            const response = await axios.put(
+                `http://localhost:8080/api/product/supplier/${id}`,
+                super_updatedItems
+            );
+
+            console.log("Edit response:", response.data);
+            setActiveEditSupplier(null);
+            await fetchData();
+        } catch (error) {
+            console.error("Error updating supplier:", error);
+        }
+    };
+
 
     const handleEdit = async (e, id) => {
         e.preventDefault();
@@ -468,14 +494,14 @@ export function ITEM_DETAILS() {
 
     return (
         <div className="min-h-dvh text-(--text-primary) py-8 md:py-12">
-            <div className="w-[95%] md:w-[85%] max-w-6xl mx-auto flex flex-col gap-6">
+            <div className="w-full md:w-[85%] max-w-6xl mx-auto flex flex-col gap-6">
 
                 {/* Page heading */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-(--border) pb-6">
                     <div>
                         <button
                             type="button"
-                            onClick={() => nav("admin/inventory")}
+                            onClick={() => nav(-1)}
                             className="text-sm text-(--text-tertiary) hover:text-(--accent) duration-150 mb-3"
                         >
                             ← Back to inventory
@@ -750,16 +776,75 @@ export function ITEM_DETAILS() {
                                             </p>
                                         </div>
 
-                                        <div className="sm:text-right">
-                                            <p className="text-sm text-(--text-tertiary)">
-                                                Supplier Cost
-                                            </p>
-                                            <p className="text-xl font-semibold mt-1">
-                                                {data.sup_price == null
-                                                    ? "Not set"
-                                                    : `$${Number(data.sup_price).toFixed(2)}`}
-                                            </p>
+                                        <div className="sm:text-right  flex flex-row">
+                                            <div>
+                                                <p className="text-sm text-(--text-tertiary) mr-2.5">
+                                                    Supplier Cost
+                                                </p>
+
+                                                {activeEditSupplier ? (
+                                                    <form
+                                                        onSubmit={(e) =>
+                                                            handleEditSupplier(e, data.id, data.sup_id)
+                                                        }
+                                                    >
+                                                        <input
+                                                            type="number"
+                                                            name="sup_price"
+                                                            defaultValue={data.sup_price ?? ""}
+                                                            min="0"
+                                                            step="0.01"
+                                                            required
+                                                            className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3"
+                                                        />
+
+                                                        <button
+                                                            type="submit"
+                                                            className="mt-2 bg-(--accent) text-white px-4 py-2 rounded-xl"
+                                                        >
+                                                            Save
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setActiveEditSupplier(false)}
+                                                            className="ml-2 border border-(--border) px-4 py-2 rounded-xl"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </form>
+                                                ) : (
+                                                    <p className="text-xl font-semibold mt-1 mr-2.5">
+                                                        {data.sup_price == null
+                                                            ? "Not set"
+                                                            : `$${Number(data.sup_price).toFixed(2)}`}
+                                                    </p>
+                                                )}
+                                                
+                                                
+                                            </div>
+                                            
+                                            <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveEditSupplier(true)}
+                                                    className="text-sm border border-(--border) rounded-lg px-3 py-2"
+                                                >
+                                                    Edit Cost
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteSupplier(data.id, data.sup_id)}
+                                                    className="text-sm border border-(--error) text-(--error) rounded-lg px-3 py-2"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+
+                                            
                                         </div>
+                                        
                                     </div>
                                 )}
                             </div>
@@ -785,6 +870,7 @@ export function ITEM_DETAILS() {
 
 export function Inventory(){
     const [data, setData] = useState([])
+    const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true);
     const [addNew, setAddNew] = useState(false)
     const nav = useNavigate()
@@ -794,14 +880,16 @@ export function Inventory(){
         const formdata = new FormData(e.target);
         const categoryData = Object.fromEntries(formdata.entries())
 
-        const res = await axios.post("http://localhost:8080/api/product/supplier/details", categoryData, {withCredentials: true})
+        const res = await axios.post("http://localhost:8080/api/inventory", categoryData, {withCredentials: true})
         nav(0)
     }
 
     const fetchData = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/product/supplier/details');
+            const res2 = await axios.get('http://localhost:8080/api/categories')
             setData(response.data);
+            setCategories(res2.data)
             console.log('Data fetched successfully:', response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -809,6 +897,8 @@ export function Inventory(){
             setLoading(false);
         }
     }
+
+    
 
     useEffect(() => {
         fetchData();
@@ -833,23 +923,47 @@ export function Inventory(){
                     </div>
                     {addNew && (
                         <div className="w-full md:w-[90%] text-2xl mx-auto">
-                            <h2 className=" underline underline-offset-5   h-fit">Make a new account!</h2>
-                            <form onSubmit={handleNewItem}>
-                            <div className="mb-4 p-2">
-                                <label className="block mb-2">Name:</label>
-                                <input type="text" name="name" placeholder="pickaxe co." className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            <h2 className=" underline underline-offset-5   h-fit">Upload an item!</h2>
+                            <form onSubmit={(e) => handleNewItem(e)}>
+                            <div className="flex flex-col max-w-[65%]">
+                                <p className="text-lg font-semibold  mt-5 mb-3">
+                                    Item name:
+                                    <input type="text" name="title" placeholder="lantern" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"></input>
+                                </p>
+                                <div className="flex md:flex-row gap-2.5 ">
+                                    <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                        Price:
+                                    <input type="number" name="price" placeholder="20" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                    </p>
+                                    <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                        Quantity:
+                                    <input type="number" name="quantity" placeholder="20" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                    </p>
+                                    <p className="text-sm text-(--text-tertiary) flex flex-col mt-5 mb-3">
+                                        Category:
+                                        <select type="text" name="category_id" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150" required >
+                                                        {categories.map(sup => (
+                                                            <option value={sup.id}>{sup.name}</option>
+                                                        ))}
+                                        </select>
+                                    </p>
+                                </div>
+                                <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                    Description:
+                                <input type="text" name="description" placeholder="000-000-0000" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                </p>
+                                
+                                <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                    Image:
+                                <input type="text" name="image" value="/server/images/kettle4.jpg" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                </p>
+                                            
                             </div>
-                            <div className="mb-4 p-2">
-                                <label className="block mb-2">Email:</label>
-                                <input type="text" name="email" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
+                            <div className="flex flex-row gap-2.5">
+                                <button type="submit" className="w-fit h-10 bg-(--accent) text-lg hover:bg-(--accent-hover) transition:ease-all duration-150 p-1.5  md:p-2 rounded">
+                                    Save Changes
+                                </button>
                             </div>
-                            <div className="mb-4 p-2">
-                                <label className="block mb-2">Phone:</label>
-                                <input type="text" name="phone" className="w-full md:w-[30%] p-2 border rounded focus:outline-0  " required />
-                            </div>
-                            <button type="submit" className="bg-(--accent) hover:bg-(--accent-hover) duration-300 text-white px-3 py-1 rounded mr-2">
-                                Submit
-                            </button>
                             </form>
                         </div>
                     )}
@@ -886,7 +1000,8 @@ export function Inventory(){
 export function Supplier(){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true);
-    const [addNew, setAddNew] = useState(false)
+    const [addNew, setAddNew] = useState(false);
+    const [activeEdit, setActiveEdit] = useState(null)
     const nav = useNavigate()
 
     const handleNewItem = async(e) => {
@@ -897,6 +1012,40 @@ export function Supplier(){
         const res = await axios.post("http://localhost:8080/api/supplier", categoryData, {withCredentials: true})
         nav(0)
     }
+
+    const handleDeleteSupplier = async (supplier_id) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8080/api/supplier/${supplier_id}`
+            );
+
+            console.log("Delete response:", response.data);
+            nav(0);
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    };
+    
+    const handleEditSupplier = async (e, supplier_id) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const updatedItem = Object.fromEntries(formData.entries());
+        
+        const super_updatedItems = {id: supplier_id, ...updatedItem}
+
+        try {
+            const response = await axios.put(`http://localhost:8080/api/supplier/${supplier_id}`,
+                super_updatedItems
+            );
+
+            console.log("Edit response:", response.data);
+            setActiveEdit(null);
+            await fetchData();
+            nav(0)
+        } catch (error) {
+            console.error("Error updating supplier:", error);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -956,25 +1105,59 @@ export function Supplier(){
                         </div>
                     )}
                     {data.map(item => (
-                        <Link to={`/admin/supplier/${item.id}`}>
-                            <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
-                                    <label className="text-3xl">
-                                        {item.name}
-                                    </label>
-                                    <label className="text-xl text-(--text-tertiary)">
-                                        Supplier ID: {item.id}
-                                    </label>
-                                    <label className="text-xl text-(--text-secondary)">
-                                        {item.supplier_name}
-                                    </label>
-                                    <label className="text-xl ">
-                                        Supplier phone number: <span className="italic">{item.phone}</span>
-                                    </label>
-                                    <label className="text-xl ">
-                                        Supplier Email: {item.email}
-                                    </label>
-                                </div>
-                        </Link>
+                        <div className="w-full md:w-[90%] flex flex-row mx-auto hover:shadow-lg justify-between duration-150 gap-2 p-1.5 md:p-5 border border-(--border) rounded-2xl">
+                                {activeEdit == item.id ? (
+                                    <form onSubmit={(e) => handleEditSupplier(e, item.id)}>
+                                        <div className="flex flex-col max-w-[65%]">
+                                            <p className="text-lg font-semibold  mt-5 mb-3">
+                                                Supplier name:
+                                                <input type="text" name="name" placeholder={item.name} className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"></input>
+                                            </p>
+                                            <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                                Phone number:
+                                            <input type="text" name="phone" placeholder="000-000-0000" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                            </p>
+                                            <p className="text-sm text-(--text-tertiary) mt-5 mb-3">
+                                                Email:
+                                            <input type="text" name="email" placeholder="example@gmail.com" className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
+                                            </p>
+                                                        
+                                        </div>
+                                        <div className="flex flex-row gap-2.5">
+                                            <img src={edit_button} alt="edit" onClick={() => setActiveEdit(null)} className="w-fit h-10 bg-(--accent) hover:bg-(--accent-hover) transition:ease-all duration-150 p-1.5  md:p-2 rounded"/>
+                                            <button type="submit" className="w-fit h-10 bg-(--accent) text-lg hover:bg-(--accent-hover) transition:ease-all duration-150 p-1.5  md:p-2 rounded">
+                                                Save Changes
+                                            </button>
+                                        </div>
+                                    </form>
+                                ):(
+                                    <>
+                                    <div className="flex flex-col max-w-[67%]">
+
+                                        <label className="text-3xl">
+                                            {item.name}
+                                        </label>
+                                        <label className="text-xl text-(--text-tertiary)">
+                                            Supplier ID: {item.id}
+                                        </label>
+                                        <label className="text-xl text-(--text-secondary)">
+                                            {item.supplier_name}
+                                        </label>
+                                        <label className="text-xl ">
+                                            Supplier phone number: <span className="italic text-lg">{item.phone}</span>
+                                        </label>
+                                        <label className="text-xl ">
+                                            Supplier Email:  <span className="italic text-lg">{item.email}</span>
+                                        </label>
+                                    </div>
+                                    <div className="flex flex-row gap-2 ">
+                                        <img src={edit_button} alt="edit" onClick={() => setActiveEdit(item.id)} className="w-fit h-10 bg-(--accent) hover:bg-(--accent-hover) transition:ease-all duration-150 p-1.5  md:p-2 rounded"/>
+                                        <button onClick={() => handleDeleteSupplier(item.id)} className="w-fit text-lg h-10 bg-red-500  hover:bg-(--error) transition:ease-all duration-150 p-1.5 md:p-2 rounded">Delete</button>
+                                    </div>
+                                    </>
+                                )}
+                                
+                        </div>
                     ))}
                 </div>
             </div>

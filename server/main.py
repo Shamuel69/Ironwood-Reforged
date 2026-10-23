@@ -103,15 +103,28 @@ def get_supplier_details(item_id):
     supplier = DataManager().db.select("suppliers", {"id": item_id})
     return supplier
 
-@app.route("/api/supplier", methods=["PUT"])
-def put_supplier():
+@app.route("/api/supplier/<item_id>", methods=["PUT"])
+def put_supplier(item_id):
     data = request.get_json()
-    DataManager().db.update("suppliers", data)
+    
+
+    print(data,    DataManager().db.select("suppliers", {"id": item_id}))
+    DataManager().db.update("suppliers", {"id": item_id}, data)
     return {"message": "Updated supplier details"}, 200
 
 @app.route("/api/supplier/<item_id>", methods=["DELETE"])
 def delete_supplier(item_id):
+    """USE FOR WHEN YOU WANT ALL OF THE SUPPLIER GONE"""
+    DataManager().db.delete("product_suppliers", {"supplier_id": item_id})
     DataManager().db.delete("suppliers", {"id": item_id})
+
+    supplier = DataManager().db.select("suppliers")
+    return supplier
+
+@app.route("/api/supplier/<item_id>/<supplier_id>", methods=["DELETE"])
+def delete_item_supplier(item_id, supplier_id):
+    """USE WHEN YOU WANT A SUPPLIER GONE FROM AN ITEM"""
+    DataManager().db.delete("product_suppliers", {"product_id": item_id, "supplier_id": supplier_id})
 
     supplier = DataManager().db.select("suppliers")
     return supplier
@@ -153,6 +166,8 @@ def PUT_products_details(item_id):
     
     return {"message": "Updated product supplier details"}, 200
 
+
+
 @app.route("/api/product/supplier", methods=["POST"])
 def set_product_supplier():
     data = request.get_json()
@@ -160,11 +175,11 @@ def set_product_supplier():
     return {"message": "Uploaded product supplier details"}, 200
 
 @app.route("/api/product/supplier/<item_id>", methods=["PUT"])
-def put_product_supplier():
+def put_product_supplier(item_id):
     data = request.get_json()
-
+    funky = {"product_id":item_id, "supplier_id": data["supplier_id"], "supplier_price": data["sup_price"]}
     
-    DataManager().db.update("product_suppliers", data)
+    DataManager().db.update("product_suppliers", {"product_id":item_id, "supplier_id": data["supplier_id"]}, funky)
     return {"message": "Updated product supplier details"}, 200
 
 
@@ -189,10 +204,14 @@ def categories_send():
 
 @app.route("/api/inventory/", methods=["POST"])
 def Add_item():
-    item_data = request.get_json()
-    print(f"API request received to add item with ID: {item_data}")
-    dataPlayer("server/ironwood.db").insert("products", item_data)
-    return jsonify({"message": f"Item with ID {item_data} added successfully."})
+    data = request.get_json()
+    print(f"API request received to add item with ID: {data}")
+    
+    product = {"id": data["id"], "image": data["image"], "title": data["prod_name"], "price": data["price"]}
+    inventory = {"product_id": data["id"], "quantity": data["quantity"]}
+
+    dataPlayer("server/ironwood.db").insert("products", data)
+    return jsonify({"message": f"Item with ID {data} added successfully."})
 
 
 @app.route("/api/inventory/<item_id>", methods=["PUT"])
