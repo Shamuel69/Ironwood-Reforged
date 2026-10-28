@@ -1,6 +1,6 @@
 # Ironwood Reforged
 
-Ironwood Reforged is a full-stack inventory management and storefront project built with React, Flask, and SQLite. Built upon a previous project, Ironwood Reforged was created to strengthen my backend development skills through database design, API development, and the introduction of complex CRUD operations.
+Ironwood Reforged is a full-stack inventory management and storefront project built with React, Flask, and SQLite. Built upon a previous project, Ironwood Reforged was created to strengthen my backend development skills through database design, API development, and implementing more complex CRUD operations.
 
 This project serves as a foundation for future marketplace applications as I continue expanding my full-stack development experience.
 
@@ -12,6 +12,8 @@ This project serves as a foundation for future marketplace applications as I con
 - Individual product detail pages
 - Search and category filtering
 - SQLite database integration through a Flask backend
+- Supplier management and product-supplier relationships
+- Accounts and account authentication
 
 ## Technologies
 
@@ -30,7 +32,7 @@ This project serves as a foundation for future marketplace applications as I con
 
 ## How to use
 
-When you start the vite program, append `/admin` to the base url. This will take you to the admin page, and the main focus of this website. Here is where you can upload, edit, and view products and suppliers; along side their relations.
+When you start the vite program, append `/admin` to the base url. This will take you to the admin page, and the main focus of this website. Here is where you can upload, edit, and view products and suppliers; alongside their relationships.
 
 (Now proud to say this part IS mobile friendly!)
 
@@ -39,8 +41,8 @@ When you start the vite program, append `/admin` to the base url. This will take
 1. Clone the repository
 
 ```bash
-git clone https://github.com/Shamuel69/Ironwood-Reforged.git ironwood
-cd ironwood
+git clone https://github.com/Shamuel69/Ironwood-Reforged.git ironwood-2
+cd ironwood-2
 ```
 
 2. Set up the python backend:
@@ -60,7 +62,7 @@ Install the required Python packages:
 Start the Flask server:
 
 ```bash
-python server/main.py
+python main.py
 ```
 
 1. Set up the React frontend:
@@ -79,6 +81,14 @@ Start the development server:
 
 Vite will show you the local address to open in your browser.
 
-## Future Improvements
+## Future Development
 
-This project is part of my ongoing development as a full-stack developer. Future improvements may include additional marketplace features and expanded functionality.
+Ironwood Reforged is an ongoing project. I plan to continue improving this project as I expand my full-stack development skills.
+
+Some ideas I am considering for future versions:
+
+- Improved storefront: Refine the homepage, product browsing experience, and search functionality.
+- Shopping cart and wishlist: Allow users to save products and build orders.
+- Inventory improvements: Expand inventory management and make product and supplier information easier to manage.
+- User accounts: Continue to add more account functionality, like collection and profile customization.
+- Deployment: Explore hosting the application so it can be accessed outside a local development environment.

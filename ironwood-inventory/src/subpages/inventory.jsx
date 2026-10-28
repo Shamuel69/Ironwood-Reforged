@@ -160,12 +160,12 @@ export function Inventory() {
   return (
     <>
       {loading ? (
-        <div className="w-full md:w-[75%] mx-auto text-(--text-primary) h-dvh flex justify-center items-center">
+        <div className="w-full md:w-[75%] mx-auto text-(--text-primary)  h-dvh flex justify-center items-center">
           <p>Loading...</p>
         </div>
       ):(
         <div className="w-full text-(--text-primary) lg:w-[90%] xl:w-[85%] transition-ease-in-out duration-75 mx-auto min-h-screen md:min-h-dvh">
-          <div className="flex flex-row py-5 items-center px-5 md:px-0">
+          <div className="flex flex-row p-5 pb-2 pt-8  items-center  ">
             <h1 className="text-4xl font-semibold">Inventory</h1>
             <div className="w-[30%] p-2 relative flex flex-row justify-between item-auto border-1-transparent rounded-[sm]">
               <img src={search} alt="search icon" className="w-fit h-8 ml-2" onClick={() => setActiveFilter(!activeFilter)} />

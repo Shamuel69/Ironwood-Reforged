@@ -224,9 +224,9 @@ def update_item(item_id):
 @app.route("/api/inventory/<item_id>", methods=["DELETE"])
 def delete_item(item_id):
     print(f"API request received to delete item with ID: {item_id}")
-    dataPlayer("server/ironwood.db").delete("products", {"id": item_id})
     dataPlayer("server/ironwood.db").delete("product_suppliers", {"product_id": item_id})
     dataPlayer("server/ironwood.db").delete("inventory", {"product_id": item_id})
+    dataPlayer("server/ironwood.db").delete("products", {"id": item_id})
 
     return jsonify({"message": f"Item with ID {item_id} deleted successfully."})
 

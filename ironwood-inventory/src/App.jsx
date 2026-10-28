@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import search from './assets/search-icon.svg'
-import camping from './assets/camping_kit1.jpg'
+import camping2 from './assets/axepart.jpg'
 import herobanner from './assets/herobanner.jpg'
 
-import camping2 from './assets/camping_kit5.jpg'
+import camping from './assets/camping_kit1.jpg'
 
 import {Inventory, InventoryItem} from './subpages/inventory.jsx'
 import { Routes, Route, Link} from 'react-router-dom';
@@ -16,7 +16,7 @@ import Signin, { Signup } from './subpages/signin.jsx'
 
 function Footer(){
     return (
-        <footer className="w-full h-fit bg-[#090909] min-h-fit pt-5 flex flex-col gap-4 justify-center text-sm items-center text-(--text-tertiary)">
+        <footer className="w-full h-fit bg-(--bg-primary) min-h-fit pt-5 flex flex-col gap-4 justify-center text-sm items-center text-(--text-tertiary)">
             <div className="border-b border-(--border) w-[80%] flex flex-col justify-center items-center gap-2 md:w-[40%]">
                 <h3 className="text-[1.25rem] text-(--text-primary)">IronWood</h3>
                 <h6 className=" mb-2">© 2026 IronWood. All rights reserved.</h6>
@@ -24,7 +24,7 @@ function Footer(){
             </div>
             
             <div className="flex flex-col  gap-2 justify-center items-center">
-                <p className=" min-w-[360px]  text-center  md:w-[500px]">
+                <p className=" w-full max-w-[500px] px-4 text-center  ">
                     This was a project I made to learn more about backend and tinker around with SQLite and Flask. 
                     I wanted to make a simple inventory management system that could be used for a small business or personal use. 
                     The project is open source and can be found on my GitHub. 
@@ -41,15 +41,15 @@ function Home(){
   
   return (
     <>
-      <div className="w-full md:w-[65%] text-(--text-primary) mx-auto min-h-screen md:min-h-dvh">
+      <div className="w-full lg:w-[75%] text-(--text-primary) mx-auto min-h-screen md:min-h-dvh">
         <section id="hero" className="pt-5">
           <div className=" ">
             <div className='bg-[#1d1f28] relative min-h-[340px] max-h-[550px] md:h-dvh w-full p-2 md:w-full mx-auto rounded-2xl ' >
               <div className="absolute inset-0 z-20">
-                <h3 className="text-5xl mt-5 md:mt-10 mb-5 px-10 text-(--text-primary)">IronWood</h3>
-                <p className="text-3xl py-0 px-15 font-light">Put the nails in fashion.</p>
+                <h3 className="text-4xl md:text-5xl mt-5 md:mt-10 mb-5 px-5 md:px-10 text-(--text-primary)">IronWood</h3>
+                <p className="text-3xl py-0 px-8 md:px-15 font-light">Put the nails in fashion.</p>
                 <div className="relative inset-0 z-20">
-                  <p className="text-2xl py-5 px-13 relative font-light">Shop the latest in outdoor gear and apparel:</p>
+                  <p className="text-2xl py-5 px-8 md:px-13 relative font-light">Shop the latest in outdoor gear and apparel:</p>
                   <Link className="border-(--border) border px-2.5 mx-15 bg-transparent hover:pointer hover:bg-(--bg-tertiary) ease-in duration-300  px-3 py-1 rounded self-center" to="/inventory">Shop Now</Link>
                 </div>
               </div>
@@ -61,22 +61,31 @@ function Home(){
           </div>
         </section>
         <section id="featured" >
-          <div className="flex flex-col  md:w-full gap-4">
-            <div className="border-b-1 border-(--border) md:p-4 flex flex-row ">
-              <div className="flex flex-col justify-between gap-4 p-5 w-full md:w-[50%]">
-                <h2>Shop!</h2>
-                <p className="text-(--text-secondary)">Prepair for the worst! Prep for your next adventure:</p>
-                <Link className="border-(--border) text-(--text-primary) border md:px-2.5 mx-10 bg-transparent hover:pointer hover:bg-(--bg-tertiary) ease-in duration-300  px-3 py-1 rounded self-center" to="/inventory">Shop Now</Link>
+          <div className="flex flex-col  md:w-full gap-4 ">
+            <div className="flex flex-col md:flex-row md:w-full gap-4 mb-4 border-b border-(--border)">
+
+              <div className="flex flex-col gap-7 p-5 md:p-5 w-full md:w-[50%]  ">
+                <h2 className="font-bold text-4xl  ">Shop!</h2>
+                <p className="text-(--text-secondary) leading-relaxed w-[75%] mx-5">
+                  Prepare for the worst. Find the gear you need
+                  for your next adventure. From great deals to the ideal equipment, IronWood has your back.
+                </p>
+                <Link className="border-(--border) text-(--text-primary) border  bg-transparent hover:pointer hover:bg-(--bg-tertiary) ease-in duration-300  px-3 py-1 rounded self-center" to="/inventory">Shop Now</Link>
               </div>
-              <img src={camping} alt="camping kit" className="w-[50%] h-auto p-2 md:p-5 object-scale-down " />
+
+              <img src={camping} alt="camping kit" className="md:w-[40%] rounded-2xl h-auto p-2 md:p-5 object-scale-down mx-auto " />
             </div>
-            <div className="flex flex-row md:w-full gap-4">
-              <div className="flex flex-col gap-4 p-2 md:p-5 w-full md:w-[50%]">
-                <h2>Explore!</h2>
-                <p className="text-(--text-secondary)">Pick up some axes for your next camping trip!</p>
-                <Link className="border-(--border) text-(--text-primary) border md:px-2.5 mx-10 bg-transparent hover:pointer hover:bg-(--bg-tertiary) ease-in duration-300  px-3 py-1 rounded self-center" to="/inventory">Shop Now</Link>
+            <div className="flex flex-col md:flex-row md:w-full gap-4 mb-4">
+              <img src={camping2} alt="camping kit" className="md:w-[40%] rounded-2xl h-auto p-2 md:p-5 object-scale-down mx-auto " />
+
+              <div className="flex flex-col gap-7 p-5 md:p-5 w-full md:w-[50%]  ">
+                <h2 className="font-bold text-4xl  ">Tools & More</h2>
+                <p className="text-(--text-secondary) leading-relaxed w-[75%] mx-5">
+                          Find your next forever trusty tool, from camping
+                          essentials to equipment built for the outdoors.
+                </p>                
+                <Link className="border-(--border) text-(--text-primary) border  bg-transparent hover:pointer hover:bg-(--bg-tertiary) ease-in duration-300  px-3 py-1 rounded self-center" to="/inventory">Shop Now</Link>
               </div>
-              <img src={camping2} alt="camping kit" className="w-[40%] h-auto p-2 md:p-5 object-scale-down mx-auto " />
 
             </div>
           </div>
@@ -91,11 +100,13 @@ function App() {
   const [active, setActive] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  useEffect(() => {
-    const fetchUser = async() => {
+  const fetchUser = async() => {
         const res = await axios.get("http://localhost:8080/api/auth/me", {withCredentials:true})
         setUser(res.data)
     }
+
+  useEffect(() => {
+    
     fetchUser()
 
     console.log(user)
@@ -144,7 +155,7 @@ function App() {
         </div>
       </section>
       
-      <section id="display_area" className="w-full min-h-screen md:min-h-dvh bg-(--bg-secondary)">
+      <section id="display_area" className="w-full min-h-screen md:min-h-dvh py-5 bg-(--bg-secondary)">
         <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/admin/*" element={<Admin />}/>

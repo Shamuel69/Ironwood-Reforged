@@ -207,15 +207,11 @@ function SupplyItemDetails( ){
 export function SupplyItems(){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true);
-    const [categoryFilter, setCategoryFilter] = useState([])
-    const [searchFilter, setSearchFilter] = useState('');
 
     const fetchData = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/product/supplier');
-            // const response2 = await axios.get('http://localhost:8080/api/categories');
             setData(response.data);
-            // setCategoryFilter(response2.data)
             console.log('Data fetched successfully:', response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -237,7 +233,13 @@ export function SupplyItems(){
         ):(
             <div className="text-(--text-primary) ">
                 <div className="w-full md:w-[90%] flex flex-col text-2xl gap-5 mx-auto">
-                    <h2 className="p-5">Items and Supplies:</h2>
+                    <div className="p-5 h-fit flex justify-between border-b border-(--border)">
+                        <div>
+                            <h2 className="p-5">Items and Supplies:</h2>
+                            <p className=" text-(--text-secondary) text-lg">Overlook all of your items quickly and their suppliers</p>
+                        </div>
+
+                    </div>
                     {data.map(item => (
                         <Link to={`/admin/supply_items/${item.product_id}/${item.supplier_id}`}>
                             <div className="w-full md:w-[90%] flex flex-col mx-auto hover:shadow-lg duration-150 gap-2 p-5 border border-(--border) rounded-2xl">
@@ -569,7 +571,7 @@ export function ITEM_DETAILS() {
     }
 
     return (
-        <div className="min-h-dvh text-(--text-primary) py-8 md:py-12">
+        <div className="min-h-dvh text-(--text-primary) py-2 ">
             <div className="w-full md:w-[85%] max-w-6xl mx-auto flex flex-col gap-6">
 
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-(--border) pb-6">
@@ -767,8 +769,6 @@ export function ITEM_DETAILS() {
                                             
                                         <button type="submit" class="mt-5 mb-3 bg-(--accent) hover:bg-(--accent-hover) self-end text-white px-5 py-2.5 rounded-xl duration-150">Submit</button>
                                         </div>
-
-                                        
                                     </div>
                                 </form>
                             )}
@@ -828,8 +828,6 @@ export function ITEM_DETAILS() {
                                 )}
                             </div>
                         </section>
-
-                        {/* Delete action */}
                         <div className="flex justify-end pt-2">
                             <button
                                 type="button"
