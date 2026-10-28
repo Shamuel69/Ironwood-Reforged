@@ -1,16 +1,17 @@
-# Ironwood
+# Ironwood Reforged
 
-This project was built to strengthen my backend development skills by using Flask and SQLite to create an inventory management system.
+Ironwood Reforged is a full-stack inventory management and storefront project built with React, Flask, and SQLite. Built upon a previous project, Ironwood Reforged was created to strengthen my backend development skills through database design, API development, and the introduction of complex CRUD operations.
 
-I plan to incorporate this style into future marketplace projects as I continue developing my backend skills.
+This project serves as a foundation for future marketplace applications as I continue expanding my full-stack development experience.
 
 ## Current Features
 
-- Mobile-friendly storefront
-- Add, edit, and remove products through the `/admin` dashboard
+- Responsive, mobile-friendly storefront and admin dashboard
+- Create, edit, and delete products through the admin dashboard
 - Customize product information
-- Individual product pages
+- Individual product detail pages
 - Search and category filtering
+- SQLite database integration through a Flask backend
 
 ## Technologies
 
@@ -29,16 +30,16 @@ I plan to incorporate this style into future marketplace projects as I continue 
 
 ## How to use
 
-Go to the url and add `/admin`, this will take you to the page where you can insert your own items into the database, or edit the currently existing ones.
+When you start the vite program, append `/admin` to the base url. This will take you to the admin page, and the main focus of this website. Here is where you can upload, edit, and view products and suppliers; along side their relations.
 
-(Note: this part is NOT mobile friendly as of right now)
+(Now proud to say this part IS mobile friendly!)
 
 ## How to install
 
 1. Clone the repository
 
 ```bash
-git clone https://github.com/Shamuel69/Ironwood-inventory.git ironwood
+git clone https://github.com/Shamuel69/Ironwood-Reforged.git ironwood
 cd ironwood
 ```
 
@@ -62,7 +63,7 @@ Start the Flask server:
 python server/main.py
 ```
 
-3. Set up the React frontend:
+1. Set up the React frontend:
 
 Open a second terminal and navigate to the frontend:
 
@@ -77,3 +78,7 @@ Start the development server:
 `npm run dev`
 
 Vite will show you the local address to open in your browser.
+
+## Future Improvements
+
+This project is part of my ongoing development as a full-stack developer. Future improvements may include additional marketplace features and expanded functionality.

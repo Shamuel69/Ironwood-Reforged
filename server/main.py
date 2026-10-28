@@ -250,5 +250,17 @@ def get_item(item_id):
     print(f"Returning data: {data}")
     return jsonify(data)
 
+@app.route("/api/inventorypage", methods=["GET"])
+def get_inventory_page():
+    inventory = DataManager().get_inventory_page()
+        
+    return inventory
+
+@app.route("/api/inventorypage/<item_id>", methods=["GET"])
+def get_item_page(item_id):
+    inventory = DataManager().get_item_info(item_id)
+        
+    return inventory
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

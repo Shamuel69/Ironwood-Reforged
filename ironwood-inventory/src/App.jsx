@@ -16,14 +16,14 @@ import Signin, { Signup } from './subpages/signin.jsx'
 
 function Footer(){
     return (
-        <footer className="w-full h-60 bg-[#090909] pt-5 flex flex-col gap-4 justify-center text-sm items-center text-(--text-tertiary)">
+        <footer className="w-full h-fit bg-[#090909] min-h-fit pt-5 flex flex-col gap-4 justify-center text-sm items-center text-(--text-tertiary)">
             <div className="border-b border-(--border) w-[80%] flex flex-col justify-center items-center gap-2 md:w-[40%]">
                 <h3 className="text-[1.25rem] text-(--text-primary)">IronWood</h3>
                 <h6 className=" mb-2">© 2026 IronWood. All rights reserved.</h6>
                 
             </div>
             
-            <div className="flex flex-col gap-2 justify-center items-center">
+            <div className="flex flex-col  gap-2 justify-center items-center">
                 <p className=" min-w-[360px]  text-center  md:w-[500px]">
                     This was a project I made to learn more about backend and tinker around with SQLite and Flask. 
                     I wanted to make a simple inventory management system that could be used for a small business or personal use. 
@@ -103,41 +103,44 @@ function App() {
 
   return (
     <>
-      <section id="header" className="w-full p-3 text-(--text-primary) bg-(--bg-primary) border-b-1 border-(--border) flex flex-row shadow-2xl justify-between items-center">
-        <div className="w-[85%] mx-auto  flex flex-row justify-between items-center">
-          <Link to="/" className="text-3xl  font-medium">IronWood</Link>
-          <div className="w-[30%] p-2  flex flex-row justify-between item-auto border-1-transparent rounded-[sm]">
-              <input type="text" placeholder="Search for products, collections, and more" className='w-[85%]' />
-              <img src={search} alt="search icon" className="w-fit h-4" />
+      <section id="header" className="min-w-screen md:min-w-dvw w-full p-3 text-(--text-primary) relative z-40 mt-12 md:mt-0  flex flex-row  justify-between items-center">
+        <div className="min-w-screen md:min-w-dvw absolute fixed left-0 bg-(--bg-primary) top-0 shadow-2xl border-b-1 border-(--border)">
+          <div className="w-[85%]  p-5 md:p-0 mx-auto flex flex-row justify-between items-center">
+            
+            <Link to="/" className="text-3xl  font-medium">IronWood</Link>
+            <div className="w-[30%] p-2  flex flex-row justify-between item-auto border-1-transparent rounded-[sm]">
+                <input type="text" placeholder="Search for products, collections, and more" className='w-[85%]' />
+                <img src={search} alt="search icon" className="w-fit h-4" />
+            </div>
+            {user ? (
+              <div className="hidden md:block relative">
+                
+                <button className="text-2xl p-2.5 hover:bg-(--bg-secondary)" onClick={() => setActive(prev => !prev)}>{user.username}</button>
+                {active && (
+                  <div className="absolute right-0 top-full mt-2 p-2 bg-(--bg-secondary) border rounded">
+                    <button className="bg-(--error) border rounded py-2" onClick={() => {
+                      axios.post("http://localhost:8080/api/auth/logout", {}, {withCredentials:true})
+                      .then(() => {
+                        setUser(null)
+                        setMenuOpen(false)
+                      })
+                    }}>
+                      Log Out
+                    </button>
+                  </div>
+                )}
+                  </div>
+                ) : (
+                  <div className="hidden md:flex text-lg border-2 rounded-3xl">
+                    <Link to="/signup" className="bg-(--bg-tertiary) p-2 rounded-3xl">
+                      Sign-Up
+                    </Link>
+                    <Link to="/signin" className="p-2">
+                      Sign-in
+                    </Link>
+                  </div>
+            )}
           </div>
-          {user ? (
-            <div className="hidden md:block relative">
-              
-              <button className="text-2xl p-2.5 hover:bg-(--bg-secondary)" onClick={() => setActive(prev => !prev)}>{user.username}</button>
-              {active && (
-                <div className="absolute right-0 top-full mt-2 p-2 bg-(--bg-secondary) border rounded">
-                  <button className="bg-(--error) border rounded py-2" onClick={() => {
-                    axios.post("http://localhost:8080/api/auth/logout", {}, {withCredentials:true})
-                    .then(() => {
-                      setUser(null)
-                      setMenuOpen(false)
-                    })
-                  }}>
-                    Log Out
-                  </button>
-                </div>
-              )}
-                </div>
-              ) : (
-                <div className="hidden md:flex text-lg border-2 rounded-3xl">
-                  <Link to="/signup" className="bg-(--bg-tertiary) p-2 rounded-3xl">
-                    Sign-Up
-                  </Link>
-                  <Link to="/signin" className="p-2">
-                    Sign-in
-                  </Link>
-                </div>
-          )}
         </div>
       </section>
       

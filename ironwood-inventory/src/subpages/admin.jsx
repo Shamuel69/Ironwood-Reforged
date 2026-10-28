@@ -267,15 +267,91 @@ export function SupplyItems(){
         </>
     )
 }
+function AdminHome(){
+    return (
+        <div className="w-full md:w-[95%] p-4 md:p-8 text-(--text-primary)">
+            <div className="mb-8 border-b border-(--border) pb-5">
+                <p className="text-sm uppercase tracking-[0.2em] text-(--text-tertiary) mb-2">
+                    Ironwood Supply
+                </p>
+
+                <h2 className="text-3xl md:text-4xl font-bold">
+                    Admin Dashboard
+                </h2>
+
+                <p className="mt-3 text-sm md:text-base text-(--text-secondary) max-w-2xl leading-relaxed">
+                    Manage your store from one place. Update products,
+                    organize inventory, and keep your business information
+                    up to date.
+                </p>
+            </div>
+
+            <div className="rounded-xl  bg-(--bg-secondary) p-5 md:p-8 mb-8">
+                <p className="text-sm text-(--text-tertiary) mb-2">
+                    CONTROL CENTER
+                </p>
+
+                <h3 className="text-xl md:text-2xl font-semibold mb-3">
+                    Welcome to your workspace.
+                </h3>
+
+                <p className="text-sm md:text-base text-(--text-secondary) leading-relaxed max-w-2xl">
+                    Everything you need to maintain your storefront is
+                    accessible through the navigation menu. Select a section
+                    from the sidebar to view, add, edit, or remove its records.
+                </p>
+            </div>
+
+            <div className="mb-4">
+                <h3 className="text-lg font-semibold">
+                    Getting Started
+                </h3>
+
+                <p className="text-sm text-(--text-secondary) mt-1">
+                    Choose a section to get to work.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-(--border) p-5">
+                    <h4 className="font-semibold mb-2">
+                        Products & Supplies
+                    </h4>
+                    <p className="text-sm text-(--text-secondary) leading-relaxed">
+                        Manage product details, names, prices, and other
+                        information used by your storefront.
+                    </p>
+                </div>
+
+                <div className="rounded-xl border border-(--border) p-5">
+                    <h4 className="font-semibold mb-2">
+                        Inventory
+                    </h4>
+                    <p className="text-sm text-(--text-secondary) leading-relaxed">
+                        Keep track of stock quantities and the items
+                        available to your business.
+                    </p>
+                </div>
+
+                <div className="rounded-xl border border-(--border) p-5 sm:col-span-2 xl:col-span-1">
+                    <h4 className="font-semibold mb-2">
+                        Suppliers & Categories
+                    </h4>
+                    <p className="text-sm text-(--text-secondary) leading-relaxed">
+                        Organize your catalog and maintain information
+                        about the suppliers you work with.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function Admin() {
-    const [data, setData] = useState([]);
-    const [activeNewItem, setActiveNewItem] = useState(false);
-    const [activeEditItem, setActiveEditItem] = useState(false);
     
     return(
         <div className="relative w-full min-h-screen md:min-h-dvh ">
-            <div id="sidebar" className="w-5 md:w-20 h-full absolute bg-(--bg-primary) left-0 flex flex-col align-middle">
+            <aside id="sidebar" className="w-20 md:w-20 h-screen fixed bg-(--bg-primary) items-center left-0  flex flex-col justify-center border-r border-(--border)">
                 <div className="p-2 ">
                     <Link className="" to="/admin/supply_items">
                         <img src={supply_item} alt="supply item"/>
@@ -293,13 +369,14 @@ export default function Admin() {
                     
                 </div>
 
-            </div>
-            <div id="content" className="w-full md:w-[calc(100%-5rem)]  absolute right-0 bg-(--bg-secondary)">
+            </aside>
+            <div id="content" className="w-[calc(100%-5rem)] md:w-[calc(100%-5rem)]  absolute right-0 bg-(--bg-secondary)">
                 <Routes>
                     <Route path="/supply_items" element={<SupplyItems />} />
                     <Route path="/categories" element={<Categories />} />                    
                     <Route path="/inventory" element={<Inventory />} /> 
                     <Route path="/inventory/:product_id" element={<ITEM_DETAILS />} />                    
+                    <Route path="/" element={<AdminHome />} />                    
 
                     <Route path="/suppliers" element={<Supplier />} />                    
                     <Route path="/supply_items/:product_id/:supplier_id" element={<SupplyItemDetails />} />
@@ -312,7 +389,6 @@ export default function Admin() {
 
 
 export function ITEM_DETAILS() {
-    // i had AI assist on this page inparticular. NOTHING is vibecoded, i had AI redecorate some of the page for me
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [supplier, setSupplier] = useState([])
@@ -496,23 +572,15 @@ export function ITEM_DETAILS() {
         <div className="min-h-dvh text-(--text-primary) py-8 md:py-12">
             <div className="w-full md:w-[85%] max-w-6xl mx-auto flex flex-col gap-6">
 
-                {/* Page heading */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-(--border) pb-6">
                     <div>
-                        <button
-                            type="button"
-                            onClick={() => nav(-1)}
-                            className="text-sm text-(--text-tertiary) hover:text-(--accent) duration-150 mb-3"
-                        >
-                            ← Back to inventory
+                        <button type="button" onClick={() => nav(-1)} className="text-sm text-(--text-tertiary) hover:text-(--accent) duration-150 mb-3" > 
+                            ← Back to inventory 
                         </button>
 
-                        <p className="text-sm text-(--text-tertiary)">
-                            Inventory / Product {data.id}
-                        </p>
+                        <p className="text-sm text-(--text-tertiary)"> Inventory / Product {data.id}</p>
 
-                        <h1 className="text-3xl md:text-4xl font-semibold mt-1">
-                            {data.prod_name}
+                        <h1 className="text-3xl md:text-4xl font-semibold mt-1"> {data.prod_name}
                         </h1>
                     </div>
 
@@ -523,10 +591,7 @@ export function ITEM_DETAILS() {
 
                 {activeEditItem ? (
                     /* Edit form */
-                    <form
-                        onSubmit={(e) => handleEdit(e, data.id)}
-                        className="bg-(--bg-secondary) border border-(--border) rounded-2xl p-5 md:p-7 flex flex-col gap-5"
-                    >
+                    <form onSubmit={(e) => handleEdit(e, data.id)} className="bg-(--bg-secondary) border border-(--border) rounded-2xl p-5 md:p-7 flex flex-col gap-5">
                         <div>
                             <h2 className="text-2xl font-semibold">Edit Product</h2>
                             <p className="text-sm text-(--text-tertiary) mt-1">
@@ -538,27 +603,14 @@ export function ITEM_DETAILS() {
                             <label htmlFor="prod_name" className="text-sm text-(--text-secondary)">
                                 Product name
                             </label>
-                            <input
-                                id="prod_name"
-                                type="text"
-                                name="prod_name"
-                                defaultValue={data.prod_name}
-                                required
-                                className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"
-                            />
+                            <input id="prod_name" type="text" name="prod_name" defaultValue={data.prod_name} required className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <label htmlFor="description" className="text-sm text-(--text-secondary)">
                                 Description
                             </label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                defaultValue={data.description ?? ""}
-                                rows={4}
-                                className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 resize-y focus:outline-none focus:border-(--accent) duration-150"
-                            />
+                            <textarea id="description" name="description" defaultValue={data.description ?? ""} rows={4} className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 resize-y focus:outline-none focus:border-(--accent) duration-150"/>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -566,55 +618,28 @@ export function ITEM_DETAILS() {
                                 <label htmlFor="prod_price" className="text-sm text-(--text-secondary)">
                                     Selling price
                                 </label>
-                                <input
-                                    id="prod_price"
-                                    type="number"
-                                    name="prod_price"
-                                    defaultValue={data.prod_price}
-                                    min="0"
-                                    step="0.01"
-                                    required
-                                    className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"
-                                />
+                                <input id="prod_price" type="number" name="prod_price" defaultValue={data.prod_price} min="0" step="0.01" required className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"/>
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="quantity" className="text-sm text-(--text-secondary)">
-                                    Quantity in stock
-                                </label>
-                                <input
-                                    id="quantity"
-                                    type="number"
-                                    name="quantity"
-                                    defaultValue={data.quantity ?? 0}
-                                    min="0"
-                                    step="1"
-                                    required
-                                    className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"
+                                <label htmlFor="quantity" className="text-sm text-(--text-secondary)"> Quantity in stock </label>
+                                <input id="quantity" type="number" name="quantity" defaultValue={data.quantity ?? 0} min="0" step="1" required className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3 focus:outline-none focus:border-(--accent) duration-150"
                                 />
                             </div>
                         </div>
 
                         <div className="flex flex-wrap gap-3 pt-3 border-t border-(--border)">
-                            <button
-                                type="submit"
-                                className="bg-(--accent) hover:bg-(--accent-hover) text-white px-5 py-2.5 rounded-xl duration-150"
-                            >
+                            <button type="submit" className="bg-(--accent) hover:bg-(--accent-hover) text-white px-5 py-2.5 rounded-xl duration-150">
                                 Save Changes
                             </button>
 
-                            <button
-                                type="button"
-                                onClick={() => setActiveEditItem(false)}
-                                className="border border-(--border) hover:bg-(--bg-tertiary) px-5 py-2.5 rounded-xl duration-150"
-                            >
+                            <button type="button" onClick={() => setActiveEditItem(false)} className="border border-(--border) hover:bg-(--bg-tertiary) px-5 py-2.5 rounded-xl duration-150">
                                 Cancel
                             </button>
                         </div>
                     </form>
                 ) : (
                     <>
-                        {/* Product information */}
                         <section className="bg-(--bg-secondary) border border-(--border) rounded-2xl overflow-hidden">
                             <div className="flex items-center justify-between gap-3 p-5 md:p-7 border-b border-(--border)">
                                 <div>
@@ -626,12 +651,7 @@ export function ITEM_DETAILS() {
                                     </p>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveEditItem(true)}
-                                    className="bg-(--bg-tertiary) hover:bg-(--accent-muted) hover:text-(--accent) border border-(--border) px-4 py-2 rounded-xl duration-150">
-                                    Edit
-                                </button>
+                                <button type="button" onClick={() => setActiveEditItem(true)} className="bg-(--bg-tertiary) hover:bg-(--accent-muted) hover:text-(--accent) border border-(--border) px-4 py-2 rounded-xl duration-150"> Edit </button>
                             </div>
 
                             <div className="p-5 ">
@@ -689,7 +709,6 @@ export function ITEM_DETAILS() {
                             </div>
                         </section>
 
-                        {/* Supplier information */}
                         <section className="bg-(--bg-secondary) border border-(--border) rounded-2xl overflow-hidden">
                             <div className="p-5 md:p-7 flex flex-row justify-between border-b border-(--border)">
                                 <div className="flex flex-col">
@@ -709,11 +728,7 @@ export function ITEM_DETAILS() {
                                 <form onSubmit={(e) => addSupplier(e, data.id, addNewSupplier)}>
                                     <div className="border border-(--border) rounded-xl p-4 md:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                         <div>
-                                            
-                                            <button type="button" onClick={() => setAddNewSupplier(prev => !prev)} 
-                                            className="border border-(--border) hover:bg-(--bg-tertiary) px-5 py-2.5 rounded-xl duration-150">
-                                                {addNewSupplier ? "Create New Supplier" : "Choose Existing Supplier"}
-                                                </button>
+                                            <button type="button" onClick={() => setAddNewSupplier(prev => !prev)} className="border border-(--border) hover:bg-(--bg-tertiary) px-5 py-2.5 rounded-xl duration-150"> {addNewSupplier ? "Create New Supplier" : "Choose Existing Supplier"}</button>
                                             {addNewSupplier ? (
                                                 <>
                                                     <p className="text-lg font-semibold  mt-5 mb-3">
@@ -783,41 +798,17 @@ export function ITEM_DETAILS() {
                                                 </p>
 
                                                 {activeEditSupplier ? (
-                                                    <form
-                                                        onSubmit={(e) =>
-                                                            handleEditSupplier(e, data.id, data.sup_id)
-                                                        }
-                                                    >
-                                                        <input
-                                                            type="number"
-                                                            name="sup_price"
-                                                            defaultValue={data.sup_price ?? ""}
-                                                            min="0"
-                                                            step="0.01"
-                                                            required
-                                                            className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3"
-                                                        />
+                                                    <form onSubmit={(e) => handleEditSupplier(e, data.id, data.sup_id)}>
+                                                        <input type="number" name="sup_price" defaultValue={data.sup_price ?? ""} min="0" step="0.01" required className="w-full bg-(--bg-primary) border border-(--border) rounded-xl p-3"/>
 
-                                                        <button
-                                                            type="submit"
-                                                            className="mt-2 bg-(--accent) text-white px-4 py-2 rounded-xl"
-                                                        >
-                                                            Save
-                                                        </button>
+                                                        <button type="submit" className="mt-2 bg-(--accent) text-white px-4 py-2 rounded-xl"> Save </button>
 
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setActiveEditSupplier(false)}
-                                                            className="ml-2 border border-(--border) px-4 py-2 rounded-xl"
-                                                        >
-                                                            Cancel
+                                                        <button type="button" onClick={() => setActiveEditSupplier(false)} className="ml-2 border border-(--border) px-4 py-2 rounded-xl"> Cancel
                                                         </button>
                                                     </form>
                                                 ) : (
                                                     <p className="text-xl font-semibold mt-1 mr-2.5">
-                                                        {data.sup_price == null
-                                                            ? "Not set"
-                                                            : `$${Number(data.sup_price).toFixed(2)}`}
+                                                        {data.sup_price == null ? "Not set" : `$${Number(data.sup_price).toFixed(2)}`}
                                                     </p>
                                                 )}
                                                 
@@ -825,21 +816,9 @@ export function ITEM_DETAILS() {
                                             </div>
                                             
                                             <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setActiveEditSupplier(true)}
-                                                    className="text-sm border border-(--border) rounded-lg px-3 py-2"
-                                                >
-                                                    Edit Cost
-                                                </button>
+                                                <button type="button" onClick={() => setActiveEditSupplier(true)} className="text-sm border border-(--border) rounded-lg px-3 py-2"> Edit Cost</button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleDeleteSupplier(data.id, data.sup_id)}
-                                                    className="text-sm border border-(--error) text-(--error) rounded-lg px-3 py-2"
-                                                >
-                                                    Delete
-                                                </button>
+                                                <button type="button" onClick={() => handleDeleteSupplier(data.id, data.sup_id)} className="text-sm border border-(--error) text-(--error) rounded-lg px-3 py-2"> Delete</button>
                                             </div>
 
                                             

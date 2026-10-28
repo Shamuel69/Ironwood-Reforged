@@ -155,6 +155,27 @@ class DataManager():
         self.db.cursor.execute(query, (id,))
         return [dict(row) for row in self.db.cursor.fetchall()]
 
+    def get_inventory_page(self):
+            query = """
+                        SELECT
+                            products.id,
+                            products.title,
+                            products.image,
+                            products.price,
+                            
+                            inventory.quantity,
+                            categories.name as category
+    
+                        FROM products
+                        LEFT JOIN categories 
+                            ON categories.id = products.category_id
+    
+                        JOIN inventory 
+                            ON products.id = inventory.product_id
+                    """
+            self.db.cursor.execute(query,)
+            return [dict(row) for row in self.db.cursor.fetchall()]
+
     def QueryName(self, session_id):
         username = self.db.select("users", {"id": session_id})
         username = username[0]["username"]
