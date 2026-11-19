@@ -6,7 +6,7 @@ from dataPlayer import dataPlayer,data
 class DataManager():
     def __init__(self):
         
-        self.db = dataPlayer("server/ironwood.db")
+        self.db = dataPlayer("ironwood.db")
 
     def Signin(self, username, password):
         users = self.db.select("users", {"username": username})

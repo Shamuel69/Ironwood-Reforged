@@ -57,7 +57,7 @@ Activate it on Windows:
 ```venv\Scripts\activate```
 
 Install the required Python packages:
-```pip install -r requirements.txt```
+```pip install -r ..\requirements.txt```
 
 Start the Flask server:
 
